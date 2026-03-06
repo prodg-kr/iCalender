@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const GOLDEN_WINDOWS = [
         {
-            rank: 1, start: '2026-09-24', end: '2029-09-29', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            rank: 1, start: '2026-09-24', end: '2026-09-29', totalDays: 6, leaveDays: 1, efficiency: 6.0,
             badge: '🏆 최고효율', badgeClass: 'badge-gold', label: '추석 황금연휴',
             desc: '추석 연휴 + 정기휴무 결합. 일요일(9/27) 하루 연차로 6일 여행!',
             holidays: ['추석 연휴', '추석'],
@@ -597,6 +597,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyGoldenWindowStyles() {
+        // 기존 점(dot)들 초기화
+        calendarGrid.querySelectorAll('.golden-dot').forEach(dot => dot.remove());
+        calendarGrid.querySelectorAll('.day-cell').forEach(cell => cell.classList.remove('golden-window'));
+
         GOLDEN_WINDOWS.forEach(w => {
             const [sY, sM, sD] = w.start.split('-').map(Number), [eY, eM, eD] = w.end.split('-').map(Number);
             const start = new Date(sY, sM - 1, sD); start.setHours(0, 0, 0, 0);
@@ -606,7 +610,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cd = new Date(cY, cM - 1, cD); cd.setHours(0, 0, 0, 0);
                 if (cd >= start && cd <= end && !cell.classList.contains('other-month')) {
                     cell.classList.add('golden-window');
-                    if (cd.getTime() === start.getTime()) { const dot = document.createElement('div'); dot.classList.add('golden-dot'); dot.title = w.label; cell.appendChild(dot); }
+                    // 해당 칸에 이미 점이 없는 경우에만 추가 (중복 방지)
+                    if (cd.getTime() === start.getTime() && !cell.querySelector('.golden-dot')) {
+                        const dot = document.createElement('div');
+                        dot.classList.add('golden-dot');
+                        dot.title = w.label;
+                        cell.appendChild(dot);
+                    }
                 }
             });
         });
