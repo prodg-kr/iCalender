@@ -141,9 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function isWorkDay(date) {
         const day = date.getDay();
         const dateStr = formatDateLocal(date);
-        if (day === 2 || day === 5) return false;
-        if (HOLIDAYS_2026[dateStr]) return false;
-        if (day === 0) return false;
+        if (day === 2 || day === 5) return false; // 화, 금 정기휴무
+        if (HOLIDAYS_2026[dateStr]) return false; // 공휴일
         return true;
     }
 
@@ -592,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isWorkDay(date)) {
             cell.classList.add('day-off');
             if (day === 2 || day === 5) cell.classList.add('regular-off');
-            if (holidayName || day === 0 || day === 6) cell.classList.add('holiday');
+            if (holidayName) cell.classList.add('holiday');
         }
         cell.setAttribute('data-date', dateStr);
         let content = `<span class="day-num">${date.getDate()}</span>`;
