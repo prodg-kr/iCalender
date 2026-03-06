@@ -95,6 +95,10 @@
     <div class="modal" id="tripModal">
         <div class="modal-content">
             <h2>새 여행 계획 추가</h2>
+
+            <!-- 현재 잔여 연차 표시 -->
+            <div class="modal-leave-status" id="modalLeaveStatus"></div>
+
             <div class="form-group">
                 <label>여행지</label>
                 <input type="text" id="tripLocation" placeholder="어디로 떠나시나요?">
@@ -104,8 +108,8 @@
                 <div class="date-inputs">
                     <input type="date" id="startDate"><span>-</span><input type="date" id="endDate">
                 </div>
-                <p id="leavePreview" style="font-size:0.8rem;color:var(--primary);margin-top:0.5rem;font-weight:600;">
-                </p>
+                <!-- 날짜 선택 시: 사용 연차 N개 → 입력 후 남은 연차 N개 실시간 표시 -->
+                <div id="leavePreview" class="leave-preview-box" style="display:none;"></div>
             </div>
             <div class="modal-actions">
                 <button class="btn-secondary" id="closeModal">취소</button>

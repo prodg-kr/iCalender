@@ -439,39 +439,30 @@ body {
 }
 
 /* Trip Indicators */
-.trip-highlight {
+/* ── 여행 일정 표시 ─────────────────────────────────────── */
+/* 셀 하단 컬러 바 */
+.trip-bar {
     position: absolute;
-    left: 4px;
-    right: 4px;
-    bottom: 4px;
-    height: 60%;
-    background: var(--primary-light);
-    border-radius: 4px;
-    z-index: -1;
-    opacity: 0.6;
+    left: 0; right: 0; bottom: 0;
+    height: 4px;
+    z-index: 3;
 }
-
-.trip-start {
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
-}
-
-.trip-end {
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-
+/* 시작일 여행지 라벨 */
 .trip-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--primary);
     position: absolute;
-    bottom: 8px;
-    left: 8px;
+    bottom: 6px;
+    left: 4px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 90%;
+    max-width: 92%;
+    z-index: 4;
+    line-height: 1.4;
 }
 /* ────────────────────────────────── */
 /* GOLDEN HOLIDAY & FLIGHT ADDITIONS  */
@@ -526,13 +517,25 @@ body {
 
 /* Calendar golden window highlight */
 .day-cell.golden-window { background: linear-gradient(135deg, #fffbeb, #fef3c7) !important; }
-.golden-dot {
+
+/* 황금연휴 시작일 라벨 뱃지 */
+.golden-cal-badge {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 7px; height: 7px;
-    border-radius: 50%;
+    top: 3px;
+    right: 3px;
+    font-size: 0.47rem;
+    font-weight: 700;
     background: #f59e0b;
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+    max-width: 68%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 5;
+    line-height: 1.5;
+    pointer-events: none;
 }
 
 /* Panel header */
@@ -1302,7 +1305,7 @@ body {
     .day-num          { font-size: 0.72rem; }
     .holiday-name, .off-tag, .training-tag { font-size: 0.48rem; margin-top: 1px; }
     .trip-label       { font-size: 0.52rem; }
-    .golden-dot       { width: 5px; height: 5px; top: 2px; right: 2px; }
+    .golden-cal-badge { font-size: 0.4rem; padding: 1px 3px; }
 
     /* 패널 헤더 */
     .panel-header h2  { font-size: 1.15rem; }
@@ -1421,3 +1424,64 @@ body {
         box-shadow: 0 2px 8px rgba(79,70,229,0.3);
     }
 }
+
+/* ── 모달 연차 상태 표시 ───────────────────────────────── */
+.modal-leave-status {
+    background: var(--bg-light, #f8f9ff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.1rem;
+}
+.mls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.mls-label { font-size: 0.8rem; color: var(--text-muted, #6b7280); }
+.mls-count {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--primary, #4f46e5);
+}
+.mls-count.low { color: #ef4444; }
+
+.mls-bar-wrap { margin-bottom: 0; }
+.mls-bar-bg {
+    position: relative;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 99px;
+    overflow: hidden;
+}
+.mls-bar-fill {
+    position: absolute;
+    left: 0; top: 0; height: 100%;
+    background: var(--primary, #4f46e5);
+    border-radius: 99px;
+    transition: width 0.3s ease;
+}
+.mls-bar-used {
+    position: absolute;
+    top: 0; height: 100%;
+    background: rgba(239,68,68,0.45);
+    transition: all 0.3s ease;
+}
+
+.mls-preview {
+    margin-top: 0.55rem;
+    font-size: 0.8rem;
+    color: var(--text-muted, #6b7280);
+    padding: 0.4rem 0.6rem;
+    background: #eef2ff;
+    border-radius: 0.45rem;
+}
+.mls-preview.over {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+.mls-after { color: var(--primary, #4f46e5); }
+
+/* leavePreview 박스 (날짜 미선택 시 숨김) */
+.leave-preview-box { margin-top: 0.4rem; }

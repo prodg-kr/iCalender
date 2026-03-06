@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '2026-01-01': '신정', '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴',
         '2026-03-01': '삼일절', '2026-03-02': '대체공휴일(삼일절)', '2026-05-01': '근로자의 날',
         '2026-05-05': '어린이날', '2026-05-24': '부처님 오신 날', '2026-05-25': '대체공휴일(부처님 오신 날)',
-        '2026-06-03': '제9회 전국동시지방선거', '2026-06-06': '현충일', '2026-07-17': '제헌절', '2026-08-15': '광복절',
+        '2026-06-03': '제9회 전국동시지방선거', '2026-06-06': '현충일', '2026-08-15': '광복절',
         '2026-08-17': '대체공휴일(광복절)', '2026-09-24': '추석 연휴', '2026-09-25': '추석',
         '2026-09-26': '추석 연휴', '2026-09-28': '대체공휴일(추석)', '2026-10-03': '개천절',
         '2026-10-05': '대체공휴일(개천절)', '2026-10-09': '한글날', '2026-12-25': '성탄절'
@@ -26,67 +26,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const GOLDEN_WINDOWS = [
         {
-            rank: 1, start: '2026-09-24', end: '2026-09-29', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            rank: 1, start: '2026-09-22', end: '2026-09-29', totalDays: 8, leaveDays: 1, efficiency: 8.0,
             badge: '🏆 최고효율', badgeClass: 'badge-gold', label: '추석 황금연휴',
-            desc: '추석 연휴 + 정기휴무 결합. 일요일(9/27) 하루 연차로 6일 여행!',
-            holidays: ['추석 연휴', '추석'],
-            tip: '9/23(수) 조퇴 + 9/30(수) 지각 활용 시 최대 8일 확보 가능'
-        },
-        {
-            rank: 2, start: '2026-06-03', end: '2026-06-07', totalDays: 5, leaveDays: 1, efficiency: 5.0,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '선거+현충일 연휴',
-            desc: '지방선거 + 정기휴무 + 현충일. 목요일(6/4) 연차로 5일 여행.',
-            holidays: ['지방선거', '현충일'],
-            tip: '6/2(화) 휴무이므로 월요일 밤 출발 가능 → 실질적 6일 효과'
-        },
-        {
-            rank: 3, start: '2026-10-03', end: '2026-10-07', totalDays: 5, leaveDays: 1, efficiency: 5.0,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '개천절 연휴',
-            desc: '개천절 + 대체공휴일 + 정기휴무. 일요일(10/4) 연차로 5일.',
-            holidays: ['개천절', '대체공휴일'],
-            tip: '10/2(금) 정기휴무를 활용해 목요일 밤부터 여행 시작 추천'
-        },
-        {
-            rank: 4, start: '2026-05-21', end: '2026-05-25', totalDays: 5, leaveDays: 1, efficiency: 5.0,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '부처님 오신 날',
-            desc: '부처님 오신 날 + 대체공휴일 연계. 토요일(5/23) 연차로 5일 여행.',
-            holidays: ['부처님 오신 날', '대체공휴일'],
-            tip: '5/20(수) 조퇴 활용 시 수요일 오후부터 여유 있게 출발 가능'
-        },
-        {
-            rank: 5, start: '2026-02-14', end: '2026-02-22', totalDays: 9, leaveDays: 3, efficiency: 3.0,
-            badge: '� 중기여행', badgeClass: 'badge-silver', label: '설날 대연휴',
-            desc: '설날 연휴 전후 연차 3개로 총 9일 확보. 장거리 여행 가능!',
-            holidays: ['설날 연휴', '설날'],
-            tip: '2/13(금) 정기휴무를 활용해 목요일 퇴근 직후 출발 추천'
-        },
-        {
-            rank: 6, start: '2026-09-22', end: '2026-09-30', totalDays: 9, leaveDays: 3, efficiency: 3.0,
-            badge: '🥈 중기여행', badgeClass: 'badge-silver', label: '추석 확장 연휴',
-            desc: '추석 연휴에 연차 3개를 더해 9일간의 여유로운 휴식.',
+            desc: '추석 연휴 + 정기휴무 결합. 연차 단 1개로 8일 여행!',
             holidays: ['추석 연휴', '추석', '대체공휴일'],
-            tip: '9/21(월) 조퇴 활용 시 10일 가까운 장기 여행 가능'
+            tip: '출발 전날(9/21 월요일) 조퇴 활용 시 오후 항공편으로 1일 더 확보 가능!'
         },
         {
-            rank: 7, start: '2026-03-01', end: '2026-03-08', totalDays: 8, leaveDays: 3, efficiency: 2.6,
-            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '삼일절 주간',
-            desc: '삼일절 연휴 + 연차 3개 조합. 일주일 이상의 리프레시.',
+            rank: 2, start: '2026-06-02', end: '2026-06-07', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            badge: '🥈 추천', badgeClass: 'badge-silver', label: '선거+현충일 연휴',
+            desc: '지방선거 + 현충일 연계. 연차 1개로 6일 여행.',
+            holidays: ['지방선거', '현충일'],
+            tip: '6/1(월) 조퇴 시 오후편으로 출발 → 총 7일 효과'
+        },
+        {
+            rank: 3, start: '2026-08-13', end: '2026-08-18', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            badge: '🥈 추천', badgeClass: 'badge-silver', label: '광복절 연휴',
+            desc: '광복절 + 대체공휴일 + 정기휴무 연계. 연차 1개로 6일.',
+            holidays: ['광복절', '대체공휴일'],
+            tip: '8/12(수) 조퇴 활용 → 오후 출발편 이용 가능'
+        },
+        {
+            rank: 4, start: '2026-10-01', end: '2026-10-06', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            badge: '🥈 추천', badgeClass: 'badge-silver', label: '개천절 연휴',
+            desc: '개천절 + 대체공휴일 + 정기휴무 연계. 연차 1개로 6일.',
+            holidays: ['개천절', '대체공휴일'],
+            tip: '9/30(수) 조퇴로 오후 출발 → 총 7일 확보'
+        },
+        {
+            rank: 5, start: '2026-05-22', end: '2026-05-26', totalDays: 5, leaveDays: 1, efficiency: 5.0,
+            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '부처님 오신 날',
+            desc: '부처님 오신 날 + 대체공휴일. 연차 1개로 5일 여행.',
+            holidays: ['부처님 오신 날', '대체공휴일'],
+            tip: '5/21(목) 조퇴 → 오후 출발편 탑승 가능'
+        },
+        {
+            rank: 6, start: '2026-03-01', end: '2026-03-06', totalDays: 6, leaveDays: 2, efficiency: 3.0,
+            badge: '📅 일반', badgeClass: 'badge-normal', label: '삼일절 연휴',
+            desc: '삼일절 + 대체공휴일 + 정기휴무. 연차 2개로 6일.',
             holidays: ['삼일절', '대체공휴일'],
-            tip: '2/28(토) 밤 출발편 이용으로 여행 시작을 앞당기세요'
+            tip: '2/28(토) 밤 출발편 활용 시 연차 0개로도 가능!'
         },
         {
-            rank: 8, start: '2026-05-01', end: '2026-05-06', totalDays: 6, leaveDays: 3, efficiency: 2.0,
-            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '5월 황금 릴레이',
-            desc: '근로자의 날부터 어린이날까지. 연차 3개로 6일간의 봄 나들이.',
-            holidays: ['근로자의 날', '어린이날'],
-            tip: '5/7(목) 지각 출근 활용 시 귀국일 부담 완화'
-        },
-        {
-            rank: 9, start: '2026-09-22', end: '2026-10-09', totalDays: 18, leaveDays: 9, efficiency: 2.0,
+            rank: 7, start: '2026-09-22', end: '2026-10-09', totalDays: 18, leaveDays: 5, efficiency: 3.6,
             badge: '🌏 장기여행', badgeClass: 'badge-long', label: '추석+개천절 슈퍼연휴',
-            desc: '추석부터 한글날까지! 연차 9개로 무려 18일 대장정.',
-            holidays: ['추석', '개천절', '한글날'],
-            tip: '장거리 여행(유럽/미주) 최적. 중국 2개 도시 경유로 경비 절감 추천'
+            desc: '추석부터 개천절까지! 연차 5개로 무려 18일 대장정.',
+            holidays: ['추석', '개천절', '대체공휴일'],
+            tip: '9/21 조퇴 + 10/10 지각 활용 시 최대 20일 확보! (경유편 이용 시 중국 2개 도시 경유 추천)'
         }
     ];
 
@@ -155,8 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function isWorkDay(date) {
         const day = date.getDay();
         const dateStr = formatDateLocal(date);
-        if (day === 2 || day === 5) return false; // 화, 금 정기휴무
-        if (HOLIDAYS_2026[dateStr]) return false; // 공휴일
+        if (day === 2 || day === 5) return false;
+        if (HOLIDAYS_2026[dateStr]) return false;
+        if (day === 0) return false;
         return true;
     }
 
@@ -371,8 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showWelcome = function () {
         const title = document.getElementById('aiPanelTitle');
-        const msgs = document.getElementById('aiMessages');
-        const ts = document.getElementById('trainingSection');
+        const msgs  = document.getElementById('aiMessages');
+        const ts    = document.getElementById('trainingSection');
         if (!title || !msgs || !ts) return; // aiPanel 미렌더 상태
         title.textContent = '💬 여행 팁 가이드';
         msgs.innerHTML = buildWelcomeMsg();
@@ -381,8 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showTrainingSection = function () {
         const title = document.getElementById('aiPanelTitle');
-        const ts = document.getElementById('trainingSection');
-        const msgs = document.getElementById('aiMessages');
+        const ts    = document.getElementById('trainingSection');
+        const msgs  = document.getElementById('aiMessages');
         if (!title || !ts || !msgs) return;
         title.textContent = '📚 사외교육 날짜 설정';
         ts.style.display = 'block';
@@ -563,8 +550,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tip = TIPS[key];
         if (!tip) return;
         const title = document.getElementById('aiPanelTitle');
-        const ts = document.getElementById('trainingSection');
-        const msgs = document.getElementById('aiMessages');
+        const ts    = document.getElementById('trainingSection');
+        const msgs  = document.getElementById('aiMessages');
         if (!title || !ts || !msgs) return; // aiPanel 미렌더 상태
         title.textContent = tip.title;
         ts.style.display = 'none';
@@ -605,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isWorkDay(date)) {
             cell.classList.add('day-off');
             if (day === 2 || day === 5) cell.classList.add('regular-off');
-            if (holidayName) cell.classList.add('holiday');
+            if (holidayName || day === 0 || day === 6) cell.classList.add('holiday');
         }
         cell.setAttribute('data-date', dateStr);
         let content = `<span class="day-num">${date.getDate()}</span>`;
@@ -618,45 +605,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyGoldenWindowStyles() {
-        // 기존 점(dot)들 초기화
-        calendarGrid.querySelectorAll('.golden-dot').forEach(dot => dot.remove());
-        calendarGrid.querySelectorAll('.day-cell').forEach(cell => cell.classList.remove('golden-window'));
+        // rank7(슈퍼연휴)은 rank1+rank4의 합산 구간이므로 캘린더 중복 제외
+        const windows = GOLDEN_WINDOWS.filter(w => w.rank !== 7);
 
-        GOLDEN_WINDOWS.forEach(w => {
-            const [sY, sM, sD] = w.start.split('-').map(Number), [eY, eM, eD] = w.end.split('-').map(Number);
-            const start = new Date(sY, sM - 1, sD); start.setHours(0, 0, 0, 0);
-            const end = new Date(eY, eM - 1, eD); end.setHours(0, 0, 0, 0);
-            calendarGrid.querySelectorAll('.day-cell').forEach(cell => {
-                const [cY, cM, cD] = cell.getAttribute('data-date').split('-').map(Number);
-                const cd = new Date(cY, cM - 1, cD); cd.setHours(0, 0, 0, 0);
-                if (cd >= start && cd <= end && !cell.classList.contains('other-month')) {
-                    cell.classList.add('golden-window');
-                    // 해당 칸에 이미 점이 없는 경우에만 추가 (중복 방지)
-                    if (cd.getTime() === start.getTime() && !cell.querySelector('.golden-dot')) {
-                        const dot = document.createElement('div');
-                        dot.classList.add('golden-dot');
-                        dot.title = w.label;
-                        cell.appendChild(dot);
-                    }
-                }
-            });
+        // 날짜별로 rank 가장 낮은(=우선순위 높은) 윈도우 1개만 매핑 → 중복 방지
+        const dateMap = {};
+        windows.forEach(w => {
+            let cur = new Date(w.start); cur.setHours(0,0,0,0);
+            const endD = new Date(w.end); endD.setHours(0,0,0,0);
+            while (cur <= endD) {
+                const ds = formatDateLocal(cur);
+                if (!dateMap[ds] || w.rank < dateMap[ds].rank) dateMap[ds] = w;
+                cur.setDate(cur.getDate() + 1);
+            }
+        });
+
+        calendarGrid.querySelectorAll('.day-cell').forEach(cell => {
+            if (cell.classList.contains('other-month')) return;
+            const ds = cell.getAttribute('data-date');
+            const w = dateMap[ds];
+            if (!w) return;
+
+            cell.classList.add('golden-window');
+
+            // 구간 시작 셀에만 라벨 뱃지 (dot 대신 텍스트로 교체)
+            if (ds === w.start) {
+                const badge = document.createElement('span');
+                badge.className = 'golden-cal-badge';
+                badge.textContent = w.label;
+                badge.title = `연차 ${w.leaveDays}개 → ${w.totalDays}일`;
+                cell.appendChild(badge);
+            }
         });
     }
 
     function applyTripStyles() {
-        calendarGrid.querySelectorAll('.trip-highlight,.trip-label').forEach(el => el.remove());
-        trips.forEach(trip => {
-            const [sY, sM, sD] = trip.start.split('-').map(Number), [eY, eM, eD] = trip.end.split('-').map(Number);
-            const start = new Date(sY, sM - 1, sD); start.setHours(0, 0, 0, 0);
-            const end = new Date(eY, eM - 1, eD); end.setHours(0, 0, 0, 0);
+        // 기존 trip 요소 전체 제거
+        calendarGrid.querySelectorAll('.trip-bar, .trip-label').forEach(el => el.remove());
+        calendarGrid.querySelectorAll('.day-cell').forEach(c =>
+            c.classList.remove('is-trip', 'trip-start', 'trip-end'));
+
+        const PALETTE = ['#4f46e5','#0ea5e9','#10b981','#f59e0b','#ec4899'];
+
+        trips.forEach((trip, idx) => {
+            const color = PALETTE[idx % PALETTE.length];
+            const start = new Date(trip.start); start.setHours(0,0,0,0);
+            const end   = new Date(trip.end);   end.setHours(0,0,0,0);
+
             calendarGrid.querySelectorAll('.day-cell').forEach(cell => {
-                const [cY, cM, cD] = cell.getAttribute('data-date').split('-').map(Number);
-                const cd = new Date(cY, cM - 1, cD); cd.setHours(0, 0, 0, 0);
-                if (cd >= start && cd <= end) {
-                    const h = document.createElement('div'); h.classList.add('trip-highlight');
-                    if (cd.getTime() === start.getTime()) { h.classList.add('trip-start'); const l = document.createElement('div'); l.classList.add('trip-label'); l.textContent = `✈️ ${trip.location}`; cell.appendChild(l); }
-                    if (cd.getTime() === end.getTime()) h.classList.add('trip-end');
-                    cell.appendChild(h);
+                const ds = cell.getAttribute('data-date');
+                const cd = new Date(ds); cd.setHours(0,0,0,0);
+                if (cd < start || cd > end) return;
+
+                const isStart = cd.getTime() === start.getTime();
+                const isEnd   = cd.getTime() === end.getTime();
+
+                cell.classList.add('is-trip');
+                if (isStart) cell.classList.add('trip-start');
+                if (isEnd)   cell.classList.add('trip-end');
+
+                // 셀 하단 컬러 바
+                const bar = document.createElement('div');
+                bar.className = 'trip-bar';
+                bar.style.background = color;
+                if (isStart) bar.style.borderRadius = '3px 0 0 3px';
+                if (isEnd)   bar.style.borderRadius = isStart ? '3px' : '0 3px 3px 0';
+                cell.appendChild(bar);
+
+                // 시작일에만 여행지 라벨
+                if (isStart) {
+                    const lbl = document.createElement('div');
+                    lbl.className = 'trip-label';
+                    lbl.style.background = color;
+                    lbl.textContent = `✈ ${trip.location}`;
+                    cell.appendChild(lbl);
                 }
             });
         });
@@ -721,15 +743,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ─── 이벤트 ───────────────────────────────────────────────────────────
+    // ─── 모달 연차 상태 렌더 ──────────────────────────────────────────────
+    function renderModalLeaveStatus(usedOverride = null) {
+        const box = document.getElementById('modalLeaveStatus');
+        if (!box) return;
+        const pct = (leaveData.remaining / leaveData.total) * 100;
+        const afterUsed = usedOverride !== null ? leaveData.remaining - usedOverride : null;
+        const isShort   = usedOverride !== null && afterUsed < 0;
+
+        box.innerHTML = `
+            <div class="mls-row">
+                <span class="mls-label">현재 잔여 연차</span>
+                <span class="mls-count ${leaveData.remaining <= 3 ? 'low' : ''}">${leaveData.remaining} / ${leaveData.total}일</span>
+            </div>
+            <div class="mls-bar-wrap">
+                <div class="mls-bar-bg">
+                    <div class="mls-bar-fill" style="width:${pct}%"></div>
+                    ${usedOverride !== null && !isShort ? `<div class="mls-bar-used" style="width:${(usedOverride / leaveData.total) * 100}%; left:${Math.max(0, pct - (usedOverride / leaveData.total) * 100)}%"></div>` : ''}
+                </div>
+            </div>
+            ${usedOverride !== null ? `
+            <div class="mls-preview ${isShort ? 'over' : ''}">
+                ${isShort
+                    ? `⚠️ 연차 <strong>${Math.abs(afterUsed)}개 부족</strong> — 날짜를 조정해주세요`
+                    : `사용 <strong>${usedOverride}일</strong> → 입력 후 잔여 <strong class="mls-after">${afterUsed}일</strong>`}
+            </div>` : ''}
+        `;
+    }
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
         nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
         todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
-        addTripBtn.addEventListener('click', () => tripModal.classList.add('active'));
+
+        // 모달 열기 — 폼 초기화 + 현재 잔여 연차 표시
+        function openModal() {
+            document.getElementById('tripLocation').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('leavePreview').style.display = 'none';
+            renderModalLeaveStatus();
+            tripModal.classList.add('active');
+        }
+        addTripBtn.addEventListener('click', openModal);
         closeModal.addEventListener('click', () => tripModal.classList.remove('active'));
         const mobileAddBtn = document.getElementById('mobileAddBtn');
-        if (mobileAddBtn) mobileAddBtn.addEventListener('click', () => tripModal.classList.add('active'));
+        if (mobileAddBtn) mobileAddBtn.addEventListener('click', openModal);
+
+        // 날짜 변경 시 실시간 연차 차감 미리보기
+        function updateLeavePreview() {
+            const s = document.getElementById('startDate').value;
+            const e = document.getElementById('endDate').value;
+            const box = document.getElementById('leavePreview');
+            if (s && e && new Date(s) <= new Date(e)) {
+                const used = calculateLeaveUsage(s, e);
+                box.style.display = 'block';
+                renderModalLeaveStatus(used);
+            } else {
+                box.style.display = 'none';
+                renderModalLeaveStatus();
+            }
+        }
+        document.getElementById('startDate').addEventListener('change', updateLeavePreview);
+        document.getElementById('endDate').addEventListener('change', updateLeavePreview);
+
         saveTripBtn.addEventListener('click', () => {
             const location = document.getElementById('tripLocation').value;
             const start = document.getElementById('startDate').value;
@@ -745,16 +821,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('ica_leave', JSON.stringify(leaveData));
                 tripModal.classList.remove('active');
                 renderCalendar(); renderSidebar();
-                document.getElementById('tripLocation').value = '';
-                document.getElementById('startDate').value = '';
-                document.getElementById('endDate').value = '';
             } else alert('모든 정보를 입력해주세요!');
-        });
-        [document.getElementById('startDate'), document.getElementById('endDate')].forEach(input => {
-            input.addEventListener('change', () => {
-                const s = document.getElementById('startDate').value, e = document.getElementById('endDate').value;
-                if (s && e) document.getElementById('leavePreview').textContent = `사용 예정 연차: ${calculateLeaveUsage(s, e)}개`;
-            });
         });
     }
 
