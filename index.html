@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>iCalender - 멋진 휴가 계획의 시작</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="brand"><i class="fas fa-plane-departure"></i><span>iCalender</span></div>
+        <div class="stats-card">
+            <h3>휴가 디데이</h3>
+            <div class="d-day-grid" id="dDayGrid">
+                <div class="d-day-item empty"><span>계획된 여행이 없습니다</span></div>
+            </div>
+        </div>
+        <div id="leaveBalanceContainer"></div>
+        <div class="golden-mini-card">
+            <h3>✨ 황금연휴 TOP 3</h3>
+            <div id="goldenMiniList"></div>
+        </div>
+        <div class="training-sidebar-card">
+            <h3>📚 사외교육 일정</h3>
+            <div id="trainingSidebarInfo"></div>
+        </div>
+        <nav class="side-nav">
+            <button class="nav-btn active" data-tab="calendar"><i class="fas fa-calendar-alt"></i> 캘린더</button>
+            <button class="nav-btn" data-tab="golden"><i class="fas fa-star"></i> 황금연휴 추천</button>
+            <button class="nav-btn" data-tab="flights"><i class="fas fa-plane"></i> 항공편 검색</button>
+            <button class="nav-btn" data-tab="ai"><i class="fas fa-book-open"></i> 여행 팁 & 교육</button>
+        </nav>
+        <div class="footer-promo">
+            <p>떠날 준비 되셨나요?</p>
+            <button class="btn-primary" id="addTripBtn">새 여행 계획하기</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <div class="header-left">
+                <h1 id="currentMonthYear">2026년 3월</h1>
+                <div class="navigation-controls">
+                    <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                    <button id="todayBtn">오늘</button>
+                    <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="일정 검색...">
+                </div>
+                <div class="user-profile">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="avatar">
+                </div>
+            </div>
+        </header>
+
+        <!-- Calendar -->
+        <div class="calendar-wrapper">
+            <div class="calendar-header-grid">
+                <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+            </div>
+            <div class="calendar-legend">
+                <span class="legend-item"><span class="legend-dot golden-dot-legend"></span> 황금연휴 구간</span>
+                <span class="legend-item"><span class="legend-dot off-dot"></span> 정기휴무 (화·금)</span>
+                <span class="legend-item"><span class="legend-dot holiday-dot"></span> 공휴일</span>
+                <span class="legend-item"><span class="legend-dot training-dot"></span> 사외교육</span>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- Golden Holiday Panel -->
+        <div id="goldenPanel" style="display:none;"></div>
+
+        <!-- Flight Panel -->
+        <div id="flightPanel" style="display:none;"></div>
+
+        <!-- AI Panel -->
+        <div id="aiPanel" class="ai-panel-outer" style="display:none;"></div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="tripModal">
+    <div class="modal-content">
+        <h2>새 여행 계획 추가</h2>
+        <div class="form-group">
+            <label>여행지</label>
+            <input type="text" id="tripLocation" placeholder="어디로 떠나시나요?">
+        </div>
+        <div class="form-group">
+            <label>날짜</label>
+            <div class="date-inputs">
+                <input type="date" id="startDate"><span>-</span><input type="date" id="endDate">
+            </div>
+            <p id="leavePreview" style="font-size:0.8rem;color:var(--primary);margin-top:0.5rem;font-weight:600;"></p>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="closeModal">취소</button>
+            <button class="btn-primary" id="saveTrip">일정 추가하기</button>
+        </div>
+    </div>
+</div>
+<button id="mobileAddBtn" aria-label="새 여행 추가">＋</button>
+<script src="script.js"></script>
+</body>
+</html>
