@@ -26,53 +26,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const GOLDEN_WINDOWS = [
         {
-            rank: 1, start: '2026-09-22', end: '2026-09-29', totalDays: 8, leaveDays: 1, efficiency: 8.0,
+            rank: 1, start: '2026-09-24', end: '2029-09-29', totalDays: 6, leaveDays: 1, efficiency: 6.0,
             badge: '🏆 최고효율', badgeClass: 'badge-gold', label: '추석 황금연휴',
-            desc: '추석 연휴 + 정기휴무 결합. 연차 단 1개로 8일 여행!',
-            holidays: ['추석 연휴', '추석', '대체공휴일'],
-            tip: '출발 전날(9/21 월요일) 조퇴 활용 시 오후 항공편으로 1일 더 확보 가능!'
+            desc: '추석 연휴 + 정기휴무 결합. 일요일(9/27) 하루 연차로 6일 여행!',
+            holidays: ['추석 연휴', '추석'],
+            tip: '9/23(수) 조퇴 + 9/30(수) 지각 활용 시 최대 8일 확보 가능'
         },
         {
-            rank: 2, start: '2026-06-02', end: '2026-06-07', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            rank: 2, start: '2026-06-03', end: '2026-06-07', totalDays: 5, leaveDays: 1, efficiency: 5.0,
             badge: '🥈 추천', badgeClass: 'badge-silver', label: '선거+현충일 연휴',
-            desc: '지방선거 + 현충일 연계. 연차 1개로 6일 여행.',
+            desc: '지방선거 + 정기휴무 + 현충일. 목요일(6/4) 연차로 5일 여행.',
             holidays: ['지방선거', '현충일'],
-            tip: '6/1(월) 조퇴 시 오후편으로 출발 → 총 7일 효과'
+            tip: '6/2(화) 휴무이므로 월요일 밤 출발 가능 → 실질적 6일 효과'
         },
         {
-            rank: 3, start: '2026-08-13', end: '2026-08-18', totalDays: 6, leaveDays: 1, efficiency: 6.0,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '광복절 연휴',
-            desc: '광복절 + 대체공휴일 + 정기휴무 연계. 연차 1개로 6일.',
-            holidays: ['광복절', '대체공휴일'],
-            tip: '8/12(수) 조퇴 활용 → 오후 출발편 이용 가능'
-        },
-        {
-            rank: 4, start: '2026-10-01', end: '2026-10-06', totalDays: 6, leaveDays: 1, efficiency: 6.0,
+            rank: 3, start: '2026-10-03', end: '2026-10-07', totalDays: 5, leaveDays: 1, efficiency: 5.0,
             badge: '🥈 추천', badgeClass: 'badge-silver', label: '개천절 연휴',
-            desc: '개천절 + 대체공휴일 + 정기휴무 연계. 연차 1개로 6일.',
+            desc: '개천절 + 대체공휴일 + 정기휴무. 일요일(10/4) 연차로 5일.',
             holidays: ['개천절', '대체공휴일'],
-            tip: '9/30(수) 조퇴로 오후 출발 → 총 7일 확보'
+            tip: '10/2(금) 정기휴무를 활용해 목요일 밤부터 여행 시작 추천'
         },
         {
-            rank: 5, start: '2026-05-22', end: '2026-05-26', totalDays: 5, leaveDays: 1, efficiency: 5.0,
-            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '부처님 오신 날',
-            desc: '부처님 오신 날 + 대체공휴일. 연차 1개로 5일 여행.',
+            rank: 4, start: '2026-05-21', end: '2026-05-25', totalDays: 5, leaveDays: 1, efficiency: 5.0,
+            badge: '� 추천', badgeClass: 'badge-silver', label: '부처님 오신 날',
+            desc: '부처님 오신 날 + 대체공휴일 연계. 토요일(5/23) 연차로 5일 여행.',
             holidays: ['부처님 오신 날', '대체공휴일'],
-            tip: '5/21(목) 조퇴 → 오후 출발편 탑승 가능'
+            tip: '5/20(수) 조퇴 활용 시 수요일 오후부터 여유 있게 출발 가능'
         },
         {
-            rank: 6, start: '2026-03-01', end: '2026-03-06', totalDays: 6, leaveDays: 2, efficiency: 3.0,
-            badge: '📅 일반', badgeClass: 'badge-normal', label: '삼일절 연휴',
-            desc: '삼일절 + 대체공휴일 + 정기휴무. 연차 2개로 6일.',
-            holidays: ['삼일절', '대체공휴일'],
-            tip: '2/28(토) 밤 출발편 활용 시 연차 0개로도 가능!'
+            rank: 5, start: '2026-08-14', end: '2026-08-18', totalDays: 5, leaveDays: 1, efficiency: 5.0,
+            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '광복절 연휴',
+            desc: '광복절 + 대체공휴일 + 정기휴무. 일요일(8/16) 연차로 5일.',
+            holidays: ['광복절', '대체공휴일'],
+            tip: '8/13(목) 조퇴 → 8/19(수) 지각으로 여행 피로 최소화'
         },
         {
-            rank: 7, start: '2026-09-22', end: '2026-10-09', totalDays: 18, leaveDays: 5, efficiency: 3.6,
+            rank: 6, start: '2026-09-22', end: '2026-10-09', totalDays: 18, leaveDays: 9, efficiency: 2.0,
             badge: '🌏 장기여행', badgeClass: 'badge-long', label: '추석+개천절 슈퍼연휴',
-            desc: '추석부터 개천절까지! 연차 5개로 무려 18일 대장정.',
-            holidays: ['추석', '개천절', '대체공휴일'],
-            tip: '9/21 조퇴 + 10/10 지각 활용 시 최대 20일 확보! (경유편 이용 시 중국 2개 도시 경유 추천)'
+            desc: '추석부터 한글날까지! 연차 9개로 무려 18일 대장정.',
+            holidays: ['추석', '개천절', '한글날'],
+            tip: '장거리 여행(유럽/미주) 최적. 중국 2개 도시 경유로 경비 절감 추천'
         }
     ];
 
