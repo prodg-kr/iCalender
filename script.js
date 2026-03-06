@@ -48,20 +48,41 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             rank: 4, start: '2026-05-21', end: '2026-05-25', totalDays: 5, leaveDays: 1, efficiency: 5.0,
-            badge: '� 추천', badgeClass: 'badge-silver', label: '부처님 오신 날',
+            badge: '🥈 추천', badgeClass: 'badge-silver', label: '부처님 오신 날',
             desc: '부처님 오신 날 + 대체공휴일 연계. 토요일(5/23) 연차로 5일 여행.',
             holidays: ['부처님 오신 날', '대체공휴일'],
             tip: '5/20(수) 조퇴 활용 시 수요일 오후부터 여유 있게 출발 가능'
         },
         {
-            rank: 5, start: '2026-08-14', end: '2026-08-18', totalDays: 5, leaveDays: 1, efficiency: 5.0,
-            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '광복절 연휴',
-            desc: '광복절 + 대체공휴일 + 정기휴무. 일요일(8/16) 연차로 5일.',
-            holidays: ['광복절', '대체공휴일'],
-            tip: '8/13(목) 조퇴 → 8/19(수) 지각으로 여행 피로 최소화'
+            rank: 5, start: '2026-02-14', end: '2026-02-22', totalDays: 9, leaveDays: 3, efficiency: 3.0,
+            badge: '� 중기여행', badgeClass: 'badge-silver', label: '설날 대연휴',
+            desc: '설날 연휴 전후 연차 3개로 총 9일 확보. 장거리 여행 가능!',
+            holidays: ['설날 연휴', '설날'],
+            tip: '2/13(금) 정기휴무를 활용해 목요일 퇴근 직후 출발 추천'
         },
         {
-            rank: 6, start: '2026-09-22', end: '2026-10-09', totalDays: 18, leaveDays: 9, efficiency: 2.0,
+            rank: 6, start: '2026-09-22', end: '2026-09-30', totalDays: 9, leaveDays: 3, efficiency: 3.0,
+            badge: '🥈 중기여행', badgeClass: 'badge-silver', label: '추석 확장 연휴',
+            desc: '추석 연휴에 연차 3개를 더해 9일간의 여유로운 휴식.',
+            holidays: ['추석 연휴', '추석', '대체공휴일'],
+            tip: '9/21(월) 조퇴 활용 시 10일 가까운 장기 여행 가능'
+        },
+        {
+            rank: 7, start: '2026-03-01', end: '2026-03-08', totalDays: 8, leaveDays: 3, efficiency: 2.6,
+            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '삼일절 주간',
+            desc: '삼일절 연휴 + 연차 3개 조합. 일주일 이상의 리프레시.',
+            holidays: ['삼일절', '대체공휴일'],
+            tip: '2/28(토) 밤 출발편 이용으로 여행 시작을 앞당기세요'
+        },
+        {
+            rank: 8, start: '2026-05-01', end: '2026-05-06', totalDays: 6, leaveDays: 3, efficiency: 2.0,
+            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '5월 황금 릴레이',
+            desc: '근로자의 날부터 어린이날까지. 연차 3개로 6일간의 봄 나들이.',
+            holidays: ['근로자의 날', '어린이날'],
+            tip: '5/7(목) 지각 출근 활용 시 귀국일 부담 완화'
+        },
+        {
+            rank: 9, start: '2026-09-22', end: '2026-10-09', totalDays: 18, leaveDays: 9, efficiency: 2.0,
             badge: '🌏 장기여행', badgeClass: 'badge-long', label: '추석+개천절 슈퍼연휴',
             desc: '추석부터 한글날까지! 연차 9개로 무려 18일 대장정.',
             holidays: ['추석', '개천절', '한글날'],
