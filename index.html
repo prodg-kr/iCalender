@@ -60,6 +60,21 @@
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="일정 검색...">
                     </div>
+                    <!-- 잔여 연차 상시 표시 뱃지 -->
+                    <div class="header-leave-badge" id="headerLeaveBadge">
+                        <div class="hlb-icon"><i class="fas fa-umbrella-beach"></i></div>
+                        <div class="hlb-info">
+                            <span class="hlb-label">잔여 연차</span>
+                            <span class="hlb-count" id="headerLeaveCount">— / —</span>
+                        </div>
+                        <div class="hlb-ring" id="headerLeaveRing">
+                            <svg viewBox="0 0 36 36">
+                                <circle class="hlb-ring-bg" cx="18" cy="18" r="15"/>
+                                <circle class="hlb-ring-fill" id="headerLeaveArc" cx="18" cy="18" r="15"
+                                    stroke-dasharray="0 94.25" stroke-dashoffset="23.56"/>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="user-profile">
                         <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="avatar">
                     </div>

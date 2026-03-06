@@ -191,6 +191,78 @@ body {
     background: var(--primary-light);
 }
 
+/* ── 헤더 잔여 연차 뱃지 ───────────────────────────────── */
+.header-leave-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-white);
+    border: 1.5px solid var(--border);
+    border-radius: 1rem;
+    padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+    cursor: default;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+}
+.header-leave-badge:hover {
+    box-shadow: 0 2px 10px rgba(79,70,229,0.12);
+    border-color: var(--primary);
+}
+
+.hlb-icon {
+    font-size: 0.95rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+}
+
+.hlb-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+.hlb-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+.hlb-count {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+/* SVG 링 */
+.hlb-ring {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+.hlb-ring svg { transform: rotate(-90deg); }
+.hlb-ring-bg {
+    fill: none;
+    stroke: #e5e7eb;
+    stroke-width: 3;
+}
+.hlb-ring-fill {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.4s ease, stroke 0.3s;
+}
+
+/* 연차 부족 상태 */
+.header-leave-badge.hlb-low  { border-color: #f59e0b; }
+.header-leave-badge.hlb-low  .hlb-count,
+.header-leave-badge.hlb-low  .hlb-icon { color: #d97706; }
+
+.header-leave-badge.hlb-empty { border-color: #ef4444; }
+.header-leave-badge.hlb-empty .hlb-count,
+.header-leave-badge.hlb-empty .hlb-icon { color: #dc2626; }
+
 /* Calendar Grid */
 .calendar-wrapper {
     background: var(--bg-white);
@@ -1292,6 +1364,11 @@ body {
     .header-right { width: 100%; justify-content: flex-end; }
     .header-right .search-bar,
     .user-profile { display: none; }
+
+    /* 모바일: 뱃지 라벨 숨기고 링+숫자만 */
+    .hlb-label { display: none; }
+    .hlb-info { flex-direction: row; align-items: center; gap: 0.2rem; }
+    .hlb-count { font-size: 0.8rem; }
 
     /* 달력 네비 버튼 */
     .navigation-controls button { padding: 0.35rem 0.55rem; font-size: 0.8rem; }

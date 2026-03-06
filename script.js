@@ -709,6 +709,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderLeaveBalance() {
         const c = document.getElementById('leaveBalanceContainer'); if (!c) return;
         c.innerHTML = `<div class="leave-card"><div class="leave-header"><span>잔여 연차</span><span class="count">${leaveData.remaining} / ${leaveData.total}</span></div><div class="progress-bar"><div class="progress" style="width:${(leaveData.remaining / leaveData.total) * 100}%"></div></div><p class="reset-info">갱신일: ${leaveData.resetDate}</p></div>`;
+
+        // 헤더 상단 뱃지 동기화
+        const countEl = document.getElementById('headerLeaveCount');
+        const arcEl   = document.getElementById('headerLeaveArc');
+        if (countEl) countEl.textContent = `${leaveData.remaining} / ${leaveData.total}`;
+        if (arcEl) {
+            const pct = leaveData.remaining / leaveData.total;
+            const circ = 2 * Math.PI * 15; // r=15 → ≈94.25
+            const dash = pct * circ;
+            arcEl.setAttribute('stroke-dasharray', `${dash.toFixed(2)} ${circ.toFixed(2)}`);
+            // 색상: 남은 연차 비율에 따라
+            arcEl.style.stroke = pct > 0.5 ? '#4f46e5' : pct > 0.2 ? '#f59e0b' : '#ef4444';
+        }
+        // 뱃지 전체 low 클래스
+        const badge = document.getElementById('headerLeaveBadge');
+        if (badge) {
+            badge.classList.toggle('hlb-low',  leaveData.remaining <= 3);
+            badge.classList.toggle('hlb-empty', leaveData.remaining === 0);
+        }
     }
 
     function renderGoldenMiniList() {
