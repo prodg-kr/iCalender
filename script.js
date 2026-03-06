@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '2026-01-01': '신정', '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴',
         '2026-03-01': '삼일절', '2026-03-02': '대체공휴일(삼일절)', '2026-05-01': '근로자의 날',
         '2026-05-05': '어린이날', '2026-05-24': '부처님 오신 날', '2026-05-25': '대체공휴일(부처님 오신 날)',
-        '2026-06-03': '제9회 전국동시지방선거', '2026-06-06': '현충일', '2026-08-15': '광복절',
+        '2026-06-03': '제9회 전국동시지방선거', '2026-06-06': '현충일', '2026-07-17': '제헌절', '2026-08-15': '광복절',
         '2026-08-17': '대체공휴일(광복절)', '2026-09-24': '추석 연휴', '2026-09-25': '추석',
         '2026-09-26': '추석 연휴', '2026-09-28': '대체공휴일(추석)', '2026-10-03': '개천절',
         '2026-10-05': '대체공휴일(개천절)', '2026-10-09': '한글날', '2026-12-25': '성탄절'
@@ -76,27 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    const FLIGHT_DESTINATIONS = {
-        short: [
-            { name: '도쿄 (NRT)', flag: '🇯🇵', avgPrice: '약 15만원~', via: '직항', duration: '2h 30m', dayTime: '주간편 선호 (오전 출발)', earlyMorning: '07:00 이전 도착편 권장' },
-            { name: '오사카 (KIX)', flag: '🇯🇵', avgPrice: '약 12만원~', via: '직항', duration: '2h', dayTime: '주간편 선호 (오후 출발)', earlyMorning: '07:00 이전 도착편 권장' },
-            { name: '베이징 (PEK)', flag: '🇨🇳', avgPrice: '약 18만원~', via: '직항/경유', duration: '1h 50m', dayTime: '주간편 위주', earlyMorning: '06:45 도착편 있음' },
-            { name: '방콕 (BKK)', flag: '🇹🇭', avgPrice: '약 25만원~', via: '직항', duration: '5h 30m', dayTime: '주간편 선호', earlyMorning: '06:00 도착편 있음' },
-            { name: '싱가포르 (SIN)', flag: '🇸🇬', avgPrice: '약 35만원~', via: '직항', duration: '6h', dayTime: '주간편 선호', earlyMorning: '06:20 도착편 있음' }
-        ],
-        long: [
-            { name: '파리 (CDG)', flag: '🇫🇷', avgPrice: '약 85만원~', via: '중국 2개도시 경유 추천', duration: '15h~', dayTime: '주간편 선호', earlyMorning: '07:00 이전 도착 경유편' },
-            { name: '런던 (LHR)', flag: '🇬🇧', avgPrice: '약 98만원~', via: '중국 2개도시 경유(PEK/PVG)', duration: '16h~', dayTime: '주간편 선호', earlyMorning: '06:50 도착 경유편' },
-            { name: '뉴욕 (JFK)', flag: '🇺🇸', avgPrice: '약 110만원~', via: '경유 2개국(NRT/HND)', duration: '18h~', dayTime: '주간편 선호', earlyMorning: '06:30 도착 경유편' },
-            { name: '뮌헨 (MUC)', flag: '🇩🇪', avgPrice: '약 90만원~', via: '중국 2개도시 경유', duration: '15h~', dayTime: '주간편 선호', earlyMorning: '07:00 이전 도착' }
-        ]
-    };
-
     let currentDate = new Date();
     let trips = JSON.parse(localStorage.getItem('ica_trips') || '[]');
     let leaveData = JSON.parse(localStorage.getItem('ica_leave') || JSON.stringify({ total: 15, remaining: 9, resetDate: '2026-08-25' }));
     let currentTab = 'calendar';
-    let selectedWindow = null;
 
     // ─── 사외교육 데이터 ─────────────────────────────────────────────────
     // 상반기 2일, 하반기 2일 — 날짜 미정, 사용자가 직접 지정
@@ -212,14 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderMainContent() {
         const cw = document.querySelector('.calendar-wrapper');
         const gp = document.getElementById('goldenPanel');
-        const fp = document.getElementById('flightPanel');
         const ap = document.getElementById('aiPanel');
         cw.style.display = currentTab === 'calendar' ? 'flex' : 'none';
         gp.style.display = currentTab === 'golden' ? 'block' : 'none';
-        if (fp) fp.style.display = currentTab === 'flights' ? 'block' : 'none';
         ap.style.display = currentTab === 'ai' ? 'flex' : 'none';
         if (currentTab === 'golden') renderGoldenPanel();
-        if (currentTab === 'flights') renderFlightPanel();
         if (currentTab === 'ai') renderAiPanel();
     }
 
@@ -263,142 +243,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="stip-note">💡 ${strat.note}</div>
                         </div>
                         <div class="golden-tags">${w.holidays.map(h => `<span class="holiday-tag">${h}</span>`).join('')}</div>
-                        <!-- <button class="btn-add-plan" onclick="goToFlights(${w.rank - 1})">✈️ 항공편 보기</button> -->
                     </div>`
         }).join('')}
             </div>
         `;
     }
 
-    window.goToFlights = function (idx) {
-        /* Flight tab is currently hidden
-        selectedWindow = GOLDEN_WINDOWS[idx];
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector('[data-tab="flights"]').classList.add('active');
-        currentTab = 'flights'; renderMainContent();
-        */
-    };
-
-    // ─── 항공편 패널 ──────────────────────────────────────────────────────
-    function renderFlightPanel() {
-        const panel = document.getElementById('flightPanel');
-        const sw = selectedWindow;
-        const strat = sw ? calcShortfallStrategy(sw.start, sw.end) : null;
-
-        panel.innerHTML = `
-            <div class="panel-header">
-                <h2>✈️ 항공편 검색</h2>
-                <p class="panel-sub">최저가 항공권 비교 · 경유 포함 · 인천국제공항(ICN) 출발 · 야간편/이른아침편 강조</p>
-            </div>
-            ${sw ? `
-            <div class="selected-window-banner">
-                <div class="sw-info">
-                    <span class="sw-icon">🗓️</span>
-                    <div><strong>${sw.label}</strong><span>${formatDateKR(sw.start)}(${getDayName(sw.start)}) ~ ${formatDateKR(sw.end)}(${getDayName(sw.end)}) · 연차 ${sw.leaveDays}개</span></div>
-                </div>
-                <button class="btn-clear-sw" onclick="clearSelectedWindow()">✕ 선택 해제</button>
-            </div>
-            ${strat ? `
-            <div class="shortfall-strategy-box">
-                <h4>⏰ 이 기간 조퇴·지각 전략</h4>
-                <div class="strategy-rows">
-                    <div class="sr-item dep">
-                        <div class="sr-badge">🛫 조퇴</div>
-                        <div class="sr-detail">
-                            <strong>${strat.depEarlyLeave.date}(${getDayName(strat.depEarlyLeave.date)}) 조퇴</strong>
-                            <span>${strat.depEarlyLeave.desc}</span>
-                        </div>
-                    </div>
-                    <div class="sr-item ret">
-                        <div class="sr-badge">🛬 지각</div>
-                        <div class="sr-detail">
-                            <strong>${strat.retLateArrive.date}(${getDayName(strat.retLateArrive.date)}) 지각</strong>
-                            <span>${strat.retLateArrive.desc}</span>
-                        </div>
-                    </div>
-                    <div class="sr-note">💡 ${strat.note}</div>
-                </div>
-            </div>` : ''}` : ''}
-            <div class="flight-search-box">
-                <div class="flight-search-row">
-                    <div class="flight-input-group"><label>출발일</label><input type="date" id="flightDep" value="${sw ? sw.start : ''}" class="flight-input"></div>
-                    <div class="flight-input-group"><label>귀국일</label><input type="date" id="flightArr" value="${sw ? sw.end : ''}" class="flight-input"></div>
-                    <button class="btn-search-flight" onclick="searchFlights()">🔍 검색</button>
-                </div>
-            </div>
-            <div class="flight-results">
-                <div class="flight-section">
-                    <h3>🏙️ 단거리 추천 (아시아) <span class="night-badge">🌙 야간편 강조</span></h3>
-                    <div class="flight-cards-row">${FLIGHT_DESTINATIONS.short.map(f => renderFlightCard(f, sw)).join('')}</div>
-                </div>
-                <div class="flight-section">
-                    <h3>🌍 장거리 추천 (유럽·미주)</h3>
-                    <p class="section-note">* 장거리는 10일 이상 기간에 적합 — 추석+개천절 슈퍼연휴(18일) 강력 추천</p>
-                    <div class="flight-cards-row">${FLIGHT_DESTINATIONS.long.map(f => renderFlightCard(f, sw)).join('')}</div>
-                </div>
-                <div class="flight-links-section">
-                    <h3>🔗 최저가 항공권 검색 바로가기</h3>
-                    <div class="link-cards-row">${renderFlightLinks(sw)}</div>
-                </div>
-            </div>
-        `;
-    }
-
-    function renderFlightCard(f, sw) {
-        const code = f.name.match(/\(([A-Z]+)\)/)[1];
-        const dep = sw ? sw.start.replace(/-/g, '') : '';
-        const ret = sw ? sw.end.replace(/-/g, '') : '';
-        const url = `https://flight.naver.com/flights/international/ICN-${code}-${dep || 'flexible'}/${code}-ICN-${ret || 'flexible'}?adult=1&fareType=Y`;
-        return `
-            <div class="flight-card">
-                <div class="flight-flag">${f.flag}</div>
-                <div class="flight-dest">${f.name}</div>
-                <div class="flight-via">${f.via} · ${f.duration}</div>
-                <div class="flight-price">${f.avgPrice}</div>
-                <div class="flight-time-tips">
-                    <div class="tip-row dep-tip">🛫 ${f.dayTime}</div>
-                    <div class="tip-row ret-tip">🛬 ${f.earlyMorning}</div>
-                </div>
-                <a href="${url}" target="_blank" class="btn-find-flight">항공권 찾기 →</a>
-            </div>
-        `;
-    }
-
-    function renderFlightLinks(sw) {
-        const dep = sw ? sw.start.replace(/-/g, '') : '', ret = sw ? sw.end.replace(/-/g, '') : '';
-        const depRaw = sw ? sw.start : '', retRaw = sw ? sw.end : '';
-        const links = [
-            { name: '네이버 항공', icon: '🟢', url: `https://flight.naver.com/flights/international/?adult=1`, desc: '국내 최다 항공사 비교' },
-            { name: '스카이스캐너', icon: '🔵', url: `https://www.skyscanner.co.kr/transport/flights/icn/anywhere/${dep}/${ret}/?adults=1`, desc: '전 세계 최저가 비교' },
-            { name: '카약 (KAYAK)', icon: '🟡', url: `https://www.kayak.co.kr/flights/ICN-anywhere/${depRaw}/${retRaw}?sort=price_a`, desc: '가격 알림 & 히스토리' },
-            { name: '구글 항공편', icon: '🔴', url: `https://www.google.com/travel/flights`, desc: '탐색 지도 기능 탁월' },
-            { name: '인터파크 투어', icon: '🟠', url: `https://fly.interpark.com/`, desc: '국내 특가 & 얼리버드' },
-            { name: 'Wego', icon: '⚪', url: `https://www.wegotravel.kr/flights`, desc: '아시아 특화 최저가' }
-        ];
-        return links.map(l => `
-            <a href="${l.url}" target="_blank" class="link-card">
-                <span class="link-icon">${l.icon}</span>
-                <div class="link-info"><strong>${l.name}</strong><span>${l.desc}</span></div>
-                <span class="link-arrow">→</span>
-            </a>`).join('');
-    }
-
-    window.clearSelectedWindow = function () { selectedWindow = null; renderFlightPanel(); };
-    window.searchFlights = function () {
-        const dep = document.getElementById('flightDep').value;
-        const arr = document.getElementById('flightArr').value;
-        if (dep && arr) {
-            selectedWindow = { start: dep, end: arr, totalDays: Math.ceil((new Date(arr) - new Date(dep)) / 86400000) + 1, leaveDays: calculateLeaveUsage(dep, arr), label: '직접 입력', holidays: [] };
-            renderFlightPanel();
-        }
-    };
-
     // ─── 사외교육 + 여행 팁 통합 패널 ───────────────────────────────────
     function renderAiPanel() {
         const panel = document.getElementById('aiPanel');
         const td = trainingDays;
         const allTd = getAllTrainingDates();
-        const sw = selectedWindow;
 
         panel.innerHTML = `
             <div class="ai-sidebar">
@@ -433,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="qbtn" onclick="showTip('annual2026')">📅 2026 맞춤 플랜</button>
                     <button class="qbtn" onclick="showTip('earlyBook')">⏰ 예약 타이밍 전략</button>
                 </div>
-                ${sw ? `<div class="ai-context-box"><strong>🗓️ 선택된 기간</strong><span>${sw.label}</span><span>${sw.start} ~ ${sw.end}</span></div>` : ''}
             </div>
 
             <div class="ai-chat-container">
@@ -442,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="btn-clear-chat" onclick="showWelcome()">← 처음으로</button>
                 </div>
                 <div class="ai-messages" id="aiMessages">
-                    ${buildWelcomeMsg(sw)}
+                    ${buildWelcomeMsg()}
                 </div>
 
                 <!-- 사외교육 설정 섹션 (처음엔 숨김) -->
@@ -480,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    function buildWelcomeMsg(sw) {
+    function buildWelcomeMsg() {
         const allTd = getAllTrainingDates();
         const tdInfo = allTd.length > 0
             ? `<br>📚 <strong>사외교육 지정일:</strong> ${allTd.map(d => formatDateKR(d) + '(' + getDayName(d) + ')').join(', ')}`
@@ -496,7 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     • 사외교육일은 <strong>연차 차감 없음</strong><br>
                     • 황금연휴와 연계 시 여행 기간 연장에 활용 가능
                     ${tdInfo}<br><br>
-                    ${sw ? `<strong>🗓️ 현재 선택 기간:</strong> ${sw.label} (${sw.start}~${sw.end})<br><br>` : ''}
                     왼쪽 버튼으로 <strong>항공권 절약 팁</strong>을 확인하거나,<br>
                     <strong>[날짜 설정하기]</strong>로 사외교육 일정을 등록하세요!
                 </div>
@@ -504,15 +357,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.showWelcome = function () {
-        document.getElementById('aiPanelTitle').textContent = '💬 여행 팁 가이드';
-        document.getElementById('aiMessages').innerHTML = buildWelcomeMsg(selectedWindow);
-        document.getElementById('trainingSection').style.display = 'none';
+        const title = document.getElementById('aiPanelTitle');
+        const msgs = document.getElementById('aiMessages');
+        const ts = document.getElementById('trainingSection');
+        if (!title || !msgs || !ts) return; // aiPanel 미렌더 상태
+        title.textContent = '💬 여행 팁 가이드';
+        msgs.innerHTML = buildWelcomeMsg();
+        ts.style.display = 'none';
     };
 
     window.showTrainingSection = function () {
-        document.getElementById('aiPanelTitle').textContent = '📚 사외교육 날짜 설정';
-        document.getElementById('trainingSection').style.display = 'block';
-        document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+        const title = document.getElementById('aiPanelTitle');
+        const ts = document.getElementById('trainingSection');
+        const msgs = document.getElementById('aiMessages');
+        if (!title || !ts || !msgs) return;
+        title.textContent = '📚 사외교육 날짜 설정';
+        ts.style.display = 'block';
+        msgs.scrollTop = msgs.scrollHeight;
     };
 
     window.updateTraining = function (half, idx, val) {
@@ -688,9 +549,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showTip = function (key) {
         const tip = TIPS[key];
         if (!tip) return;
-        document.getElementById('aiPanelTitle').textContent = tip.title;
-        document.getElementById('trainingSection').style.display = 'none';
+        const title = document.getElementById('aiPanelTitle');
+        const ts = document.getElementById('trainingSection');
         const msgs = document.getElementById('aiMessages');
+        if (!title || !ts || !msgs) return; // aiPanel 미렌더 상태
+        title.textContent = tip.title;
+        ts.style.display = 'none';
         msgs.innerHTML = `
             <div class="ai-msg ai">
                 <div class="msg-avatar">💡</div>
