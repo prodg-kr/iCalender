@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ap = document.getElementById('aiPanel');
         cw.style.display = currentTab === 'calendar' ? 'flex' : 'none';
         gp.style.display = currentTab === 'golden' ? 'block' : 'none';
-        fp.style.display = currentTab === 'flights' ? 'block' : 'none';
+        if (fp) fp.style.display = currentTab === 'flights' ? 'block' : 'none';
         ap.style.display = currentTab === 'ai' ? 'flex' : 'none';
         if (currentTab === 'golden') renderGoldenPanel();
         if (currentTab === 'flights') renderFlightPanel();
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="stip-note">💡 ${strat.note}</div>
                         </div>
                         <div class="golden-tags">${w.holidays.map(h => `<span class="holiday-tag">${h}</span>`).join('')}</div>
-                        <button class="btn-add-plan" onclick="goToFlights(${w.rank - 1})">✈️ 항공편 보기</button>
+                        <!-- <button class="btn-add-plan" onclick="goToFlights(${w.rank - 1})">✈️ 항공편 보기</button> -->
                     </div>`
         }).join('')}
             </div>
@@ -271,10 +271,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.goToFlights = function (idx) {
+        /* Flight tab is currently hidden
         selectedWindow = GOLDEN_WINDOWS[idx];
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.querySelector('[data-tab="flights"]').classList.add('active');
         currentTab = 'flights'; renderMainContent();
+        */
     };
 
     // ─── 항공편 패널 ──────────────────────────────────────────────────────
