@@ -932,15 +932,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // 선택 상태
             if (drpStart && ds === drpFmt(drpStart)) cell.classList.add('drp-start');
             if (drpEnd   && ds === drpFmt(drpEnd))   cell.classList.add('drp-end');
-
-            // 확정된 범위 또는 hover 미리보기 범위
-            const rangeEnd = drpEnd || (drpPickingEnd && drpHoverDate ? drpHoverDate : null);
+            // hover 미리보기 끝날짜
+            if (!drpEnd && drpHoverDate && ds === drpFmt(drpHoverDate)) cell.classList.add('drp-end');
+            // 범위 하이라이트 (확정 or hover)
+            const rangeEnd = drpEnd || drpHoverDate;
             if (drpStart && rangeEnd) {
                 const t = date.getTime();
-                const s = drpStart.getTime(), e = rangeEnd.getTime();
-                if (t > Math.min(s,e) && t < Math.max(s,e)) cell.classList.add('drp-in-range');
-                // hover 중 끝 날짜 표시
-                if (drpHoverDate && !drpEnd && ds === drpFmt(drpHoverDate)) cell.classList.add('drp-end');
+                if (t > drpStart.getTime() && t < rangeEnd.getTime()) cell.classList.add('drp-in-range');
             }
 
             cell.addEventListener('click', () => drpSelectDate(date));
@@ -1030,7 +1028,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
         nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-        todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
+        todayBtn.addEventListener('click', () => {
+            currentDate = new Date();
+            currentTab = 'calendar';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-tab="calendar"]').classList.add('active');
+            renderMainContent();
+        });
 
         // 모달 열기
         function openModal() {
@@ -1044,6 +1048,8 @@ document.addEventListener('DOMContentLoaded', () => {
             drpMonth = new Date(); drpMonth.setDate(1);
         }
         addTripBtn.addEventListener('click', openModal);
+        const addTripHeaderBtn = document.getElementById('addTripHeaderBtn');
+        if (addTripHeaderBtn) addTripHeaderBtn.addEventListener('click', openModal);
         closeModal.addEventListener('click', () => {
             editingIdx = -1;
             document.querySelector('#tripModal h2').textContent = '새 여행 계획 추가';

@@ -449,6 +449,24 @@ body {
 .trip-edit-btn:hover { background: #ede9fe; border-color: var(--primary); color: var(--primary); }
 .trip-del-btn:hover  { background: #fee2e2; border-color: #ef4444; color: #dc2626; }
 
+.btn-add-trip-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: filter 0.2s;
+    font-family: inherit;
+}
+.btn-add-trip-header:hover { filter: brightness(1.1); }
+
 .btn-primary:hover {
     filter: brightness(1.1);
 }
@@ -475,6 +493,8 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    overflow-y: auto;
+    padding: 1.5rem;
 }
 
 .modal.active {
@@ -487,9 +507,11 @@ body {
     padding: 2.5rem;
     border-radius: 1.5rem;
     width: 420px;
+    max-width: 100%;
     box-shadow: var(--shadow);
     position: relative;
     overflow: visible;
+    margin: auto;
 }
 
 @keyframes fadeIn {
@@ -559,10 +581,12 @@ body {
     box-shadow: 0 8px 32px rgba(0,0,0,0.14);
     padding: 1rem;
     width: 300px;
-    margin-top: 0.4rem;
+    bottom: calc(100% + 0.4rem);
+    top: auto;
+    left: 0;
     animation: drpFadeIn 0.15s ease;
 }
-@keyframes drpFadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+@keyframes drpFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 
 .drp-header {
     display: flex;
@@ -1506,6 +1530,7 @@ body {
     .header-left h1 { font-size: 1.05rem; }
     .header-right { width: 100%; justify-content: flex-end; }
     .header-right .search-bar,
+    .btn-add-trip-header,
     .user-profile { display: none; }
 
     /* 모바일: 뱃지 라벨 숨기고 링+숫자만 */
