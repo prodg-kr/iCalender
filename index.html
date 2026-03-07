@@ -120,9 +120,28 @@
             </div>
             <div class="form-group">
                 <label>날짜</label>
-                <div class="date-inputs">
-                    <input type="date" id="startDate"><span>-</span><input type="date" id="endDate">
+                <!-- Date Range Picker 트리거 -->
+                <div class="drp-trigger" id="drpTrigger">
+                    <span class="drp-icon">✈️</span>
+                    <span class="drp-text" id="drpText">출발일 → 도착일 선택</span>
+                    <span class="drp-clear" id="drpClear" style="display:none">✕</span>
                 </div>
+                <!-- 팝업 달력 -->
+                <div class="drp-popup" id="drpPopup" style="display:none">
+                    <div class="drp-header">
+                        <button class="drp-nav" id="drpPrev">‹</button>
+                        <span class="drp-month-label" id="drpMonthLabel"></span>
+                        <button class="drp-nav" id="drpNext">›</button>
+                    </div>
+                    <div class="drp-weekdays">
+                        <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+                    </div>
+                    <div class="drp-grid" id="drpGrid"></div>
+                    <div class="drp-hint" id="drpHint">출발일을 선택하세요</div>
+                </div>
+                <!-- 숨긴 실제 값 (기존 로직 호환) -->
+                <input type="hidden" id="startDate">
+                <input type="hidden" id="endDate">
                 <!-- 날짜 선택 시: 사용 연차 N개 → 입력 후 남은 연차 N개 실시간 표시 -->
                 <div id="leavePreview" class="leave-preview-box" style="display:none;"></div>
             </div>
