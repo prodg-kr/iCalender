@@ -888,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
     // ─── Date Range Picker ────────────────────────────────────────────
-    let drpStart = null, drpEnd = null, drpPickingEnd = false;
+    let drpStart = null, drpEnd = null, drpPickingEnd = false, drpHoverDate = null;
     let drpMonth = new Date(); // 현재 표시 월
 
     function drpFmt(date) { return formatDateLocal(date); }
@@ -932,9 +932,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // 선택 상태
             if (drpStart && ds === drpFmt(drpStart)) cell.classList.add('drp-start');
             if (drpEnd   && ds === drpFmt(drpEnd))   cell.classList.add('drp-end');
-            if (drpStart && drpEnd) {
+
+            // 확정된 범위 또는 hover 미리보기 범위
+            const rangeEnd = drpEnd || (drpPickingEnd && drpHoverDate ? drpHoverDate : null);
+            if (drpStart && rangeEnd) {
                 const t = date.getTime();
-                if (t > drpStart.getTime() && t < drpEnd.getTime()) cell.classList.add('drp-in-range');
+                const s = drpStart.getTime(), e = rangeEnd.getTime();
+                if (t > Math.min(s,e) && t < Math.max(s,e)) cell.classList.add('drp-in-range');
+                // hover 중 끝 날짜 표시
+                if (drpHoverDate && !drpEnd && ds === drpFmt(drpHoverDate)) cell.classList.add('drp-end');
             }
 
             cell.addEventListener('click', () => drpSelectDate(date));
@@ -956,12 +962,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function drpSelectDate(date) {
         if (!drpPickingEnd) {
             // 1번째 클릭 → 출발일
-            drpStart = date; drpEnd = null; drpPickingEnd = true;
+            drpStart = date; drpEnd = null; drpHoverDate = null; drpPickingEnd = true;
             document.getElementById('drpHint').textContent = '도착일을 선택하세요';
         } else {
             // 2번째 클릭 → 도착일
-            if (date < drpStart) { drpStart = date; drpPickingEnd = true; drpEnd = null; drpRender(); return; }
-            drpEnd = date; drpPickingEnd = false;
+            if (date < drpStart) { drpStart = date; drpPickingEnd = true; drpEnd = null; drpHoverDate = null; drpRender(); return; }
+            drpEnd = date; drpPickingEnd = false; drpHoverDate = null;
             document.getElementById('drpHint').textContent = '✅ 선택 완료! 다시 클릭하면 변경';
             drpApply();
         }
@@ -969,11 +975,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drpHover(date) {
-        if (!drpPickingEnd || !drpStart) return;
-        // hover 미리보기
-        drpEnd = date >= drpStart ? date : null;
+        if (!drpPickingEnd || !drpStart) { drpHoverDate = null; return; }
+        drpHoverDate = date >= drpStart ? date : null;
         drpRender();
-        drpEnd = null; // hover는 임시, 실제 선택 전까지 null 유지
     }
 
     function drpApply() {
@@ -1010,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drpReset() {
-        drpStart = null; drpEnd = null; drpPickingEnd = false;
+        drpStart = null; drpEnd = null; drpPickingEnd = false; drpHoverDate = null;
         document.getElementById('startDate').value = '';
         document.getElementById('endDate').value   = '';
         const txt = document.getElementById('drpText');
@@ -1026,14 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
         nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-        todayBtn.addEventListener('click', () => {
-            currentDate = new Date();
-            // 어떤 탭에 있어도 캘린더로 전환 + 오늘 달로 이동
-            currentTab = 'calendar';
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('[data-tab="calendar"]').classList.add('active');
-            renderMainContent();
-        });
+        todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
 
         // 모달 열기
         function openModal() {
@@ -1047,8 +1044,6 @@ document.addEventListener('DOMContentLoaded', () => {
             drpMonth = new Date(); drpMonth.setDate(1);
         }
         addTripBtn.addEventListener('click', openModal);
-        const sidebarAddTripBtn = document.getElementById('sidebarAddTripBtn');
-        if (sidebarAddTripBtn) sidebarAddTripBtn.addEventListener('click', openModal);
         closeModal.addEventListener('click', () => {
             editingIdx = -1;
             document.querySelector('#tripModal h2').textContent = '새 여행 계획 추가';
