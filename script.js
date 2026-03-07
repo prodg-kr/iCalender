@@ -825,25 +825,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 기존 값 채우기
         document.getElementById('tripLocation').value = trip.location;
-
-        // DRP에 기존 날짜 세팅
-        drpStart = new Date(trip.start); drpStart.setHours(0,0,0,0);
-        drpEnd   = new Date(trip.end);   drpEnd.setHours(0,0,0,0);
-        drpPickingEnd = false;
         document.getElementById('startDate').value = trip.start;
         document.getElementById('endDate').value   = trip.end;
 
-        const txt = document.getElementById('drpText');
-        const clr = document.getElementById('drpClear');
-        txt.textContent = `${formatDateKR(trip.start)}(${getDayName(trip.start)}) → ${formatDateKR(trip.end)}(${getDayName(trip.end)})`;
-        txt.classList.add('drp-text-selected');
-        if (clr) clr.style.display = 'inline';
-
-        drpMonth = new Date(trip.start); drpMonth.setDate(1);
-        document.getElementById('drpHint').textContent = '날짜를 다시 선택하거나 그대로 완료하세요';
-
-        // 연차 미리보기: 편집 시 원래 연차는 복원된 상태로 계산
-        const tempLeave = leaveData.remaining + trip.leaveUsed;
+        // 연차 미리보기
         renderModalLeaveStatus(calculateLeaveUsage(trip.start, trip.end));
 
         tripModal.classList.add('active');
@@ -887,154 +872,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>` : ''}
         `;
     }
-    // ─── Date Range Picker ────────────────────────────────────────────
-    let drpStart = null, drpEnd = null, drpPickingEnd = false, drpHoverDate = null;
-    let drpMonth = new Date(); // 현재 표시 월
-
-    function drpFmt(date) { return formatDateLocal(date); }
-
-    function drpRender() {
-        const grid = document.getElementById('drpGrid');
-        const label = document.getElementById('drpMonthLabel');
-        if (!grid || !label) return;
-
-        const y = drpMonth.getFullYear(), m = drpMonth.getMonth();
-        label.textContent = `${y}년 ${m + 1}월`;
-        grid.innerHTML = '';
-
-        const firstDay = new Date(y, m, 1).getDay();
-        const lastDate = new Date(y, m + 1, 0).getDate();
-        const prevLast = new Date(y, m, 0).getDate();
-
-        // 이전 달 빈 칸
-        for (let i = firstDay; i > 0; i--) {
-            const cell = document.createElement('div');
-            cell.classList.add('drp-cell', 'drp-other');
-            cell.textContent = prevLast - i + 1;
-            grid.appendChild(cell);
-        }
-
-        const today = formatDateLocal(new Date());
-
-        for (let d = 1; d <= lastDate; d++) {
-            const date = new Date(y, m, d);
-            const ds = drpFmt(date);
-            const cell = document.createElement('div');
-            cell.classList.add('drp-cell');
-            cell.textContent = d;
-            cell.dataset.date = ds;
-
-            // 날짜 타입 클래스
-            if (!isWorkDay(date)) cell.classList.add('drp-off');
-            if (HOLIDAYS_2026[ds]) cell.classList.add('drp-holiday');
-            if (ds === today) cell.classList.add('drp-today');
-
-            // 선택 상태
-            if (drpStart && ds === drpFmt(drpStart)) cell.classList.add('drp-start');
-            if (drpEnd   && ds === drpFmt(drpEnd))   cell.classList.add('drp-end');
-            // hover 미리보기 끝날짜
-            if (!drpEnd && drpHoverDate && ds === drpFmt(drpHoverDate)) cell.classList.add('drp-end');
-            // 범위 하이라이트 (확정 or hover)
-            const rangeEnd = drpEnd || drpHoverDate;
-            if (drpStart && rangeEnd) {
-                const t = date.getTime();
-                if (t > drpStart.getTime() && t < rangeEnd.getTime()) cell.classList.add('drp-in-range');
-            }
-
-            cell.addEventListener('click', () => drpSelectDate(date));
-            cell.addEventListener('mouseenter', () => drpHover(date));
-            grid.appendChild(cell);
-        }
-
-        // 다음 달 빈 칸
-        const filled = firstDay + lastDate;
-        const rem = filled <= 35 ? 35 - filled : 42 - filled;
-        for (let i = 1; i <= rem; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add('drp-cell', 'drp-other');
-            cell.textContent = i;
-            grid.appendChild(cell);
-        }
-    }
-
-    function drpSelectDate(date) {
-        if (!drpPickingEnd) {
-            // 1번째 클릭 → 출발일
-            drpStart = date; drpEnd = null; drpHoverDate = null; drpPickingEnd = true;
-            document.getElementById('drpHint').textContent = '도착일을 선택하세요';
-        } else {
-            // 2번째 클릭 → 도착일
-            if (date < drpStart) { drpStart = date; drpPickingEnd = true; drpEnd = null; drpHoverDate = null; drpRender(); return; }
-            drpEnd = date; drpPickingEnd = false; drpHoverDate = null;
-            document.getElementById('drpHint').textContent = '✅ 선택 완료! 다시 클릭하면 변경';
-            drpApply();
-        }
-        drpRender();
-    }
-
-    function drpHover(date) {
-        if (!drpPickingEnd || !drpStart) { drpHoverDate = null; return; }
-        drpHoverDate = date >= drpStart ? date : null;
-        drpRender();
-    }
-
-    function drpApply() {
-        if (!drpStart || !drpEnd) return;
-        const s = drpFmt(drpStart), e = drpFmt(drpEnd);
-        document.getElementById('startDate').value = s;
-        document.getElementById('endDate').value   = e;
-
-        // 트리거 텍스트 업데이트
-        const txt = document.getElementById('drpText');
-        const clr = document.getElementById('drpClear');
-        txt.textContent = `${formatDateKR(s)}(${getDayName(s)}) → ${formatDateKR(e)}(${getDayName(e)})`;
-        txt.classList.add('drp-text-selected');
-        if (clr) clr.style.display = 'inline';
-
-        if (window._updateLeavePreview) window._updateLeavePreview();
-        // 팝업 닫기 (0.3초 딜레이 — 완료 확인 후)
-        setTimeout(() => {
-            const popup = document.getElementById('drpPopup');
-            if (popup) popup.style.display = 'none';
-        }, 300);
-    }
-
-    function drpOpen() {
-        const popup = document.getElementById('drpPopup');
-        if (!popup) return;
-        const isOpen = popup.style.display !== 'none';
-        popup.style.display = isOpen ? 'none' : 'block';
-        if (!isOpen) {
-            drpMonth = drpStart ? new Date(drpStart) : new Date();
-            drpMonth.setDate(1);
-            drpRender();
-        }
-    }
-
-    function drpReset() {
-        drpStart = null; drpEnd = null; drpPickingEnd = false; drpHoverDate = null;
-        document.getElementById('startDate').value = '';
-        document.getElementById('endDate').value   = '';
-        const txt = document.getElementById('drpText');
-        const clr = document.getElementById('drpClear');
-        if (txt) { txt.textContent = '출발일 → 도착일 선택'; txt.classList.remove('drp-text-selected'); }
-        if (clr) clr.style.display = 'none';
-        document.getElementById('drpHint').textContent = '출발일을 선택하세요';
-        document.getElementById('leavePreview').style.display = 'none';
-        renderModalLeaveStatus();
-        drpRender();
-    }
-
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
         nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-        todayBtn.addEventListener('click', () => {
-            currentDate = new Date();
-            currentTab = 'calendar';
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('[data-tab="calendar"]').classList.add('active');
-            renderMainContent();
-        });
+        todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
 
         // 모달 열기
         function openModal() {
@@ -1042,14 +883,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#tripModal h2').textContent = '새 여행 계획 추가';
             document.getElementById('saveTrip').textContent = '일정 추가하기';
             document.getElementById('tripLocation').value = '';
-            drpReset();
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('leavePreview').style.display = 'none';
             renderModalLeaveStatus();
             tripModal.classList.add('active');
-            drpMonth = new Date(); drpMonth.setDate(1);
         }
         addTripBtn.addEventListener('click', openModal);
-        const addTripHeaderBtn = document.getElementById('addTripHeaderBtn');
-        if (addTripHeaderBtn) addTripHeaderBtn.addEventListener('click', openModal);
         closeModal.addEventListener('click', () => {
             editingIdx = -1;
             document.querySelector('#tripModal h2').textContent = '새 여행 계획 추가';
@@ -1058,29 +898,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const mobileAddBtn = document.getElementById('mobileAddBtn');
         if (mobileAddBtn) mobileAddBtn.addEventListener('click', openModal);
-
-        // DRP 이벤트 바인딩
-        const trigger = document.getElementById('drpTrigger');
-        const clrBtn  = document.getElementById('drpClear');
-        const prevBtn = document.getElementById('drpPrev');
-        const nextBtn = document.getElementById('drpNext');
-
-        if (trigger) trigger.addEventListener('click', (e) => {
-            if (e.target.id === 'drpClear') return;
-            drpOpen();
-        });
-        if (clrBtn) clrBtn.addEventListener('click', (e) => { e.stopPropagation(); drpReset(); });
-        if (prevBtn) prevBtn.addEventListener('click', () => { drpMonth.setMonth(drpMonth.getMonth() - 1); drpRender(); });
-        if (nextBtn) nextBtn.addEventListener('click', () => { drpMonth.setMonth(drpMonth.getMonth() + 1); drpRender(); });
-
-        // 팝업 외부 클릭 시 닫기
-        document.addEventListener('click', (e) => {
-            const popup = document.getElementById('drpPopup');
-            const trigger = document.getElementById('drpTrigger');
-            if (popup && !popup.contains(e.target) && !trigger.contains(e.target)) {
-                popup.style.display = 'none';
-            }
-        });
 
         // 날짜 변경 시 실시간 연차 미리보기
         function updateLeavePreview() {
@@ -1096,7 +913,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderModalLeaveStatus();
             }
         }
-        window._updateLeavePreview = updateLeavePreview; // drpApply에서 호출용
+        document.getElementById('startDate').addEventListener('change', updateLeavePreview);
+        document.getElementById('endDate').addEventListener('change', updateLeavePreview);
 
         saveTripBtn.addEventListener('click', () => {
             const location = document.getElementById('tripLocation').value;
