@@ -819,16 +819,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!trip) return;
         editingIdx = idx;
 
-        // 모달 제목 변경
         document.querySelector('#tripModal h2').textContent = '여행 일정 수정';
         document.getElementById('saveTrip').textContent = '수정 완료';
-
-        // 기존 값 채우기
         document.getElementById('tripLocation').value = trip.location;
         document.getElementById('startDate').value = trip.start;
-        document.getElementById('endDate').value   = trip.end;
+        document.getElementById('endDate').value = trip.end;
 
-        // 연차 미리보기
+        const box = document.getElementById('leavePreview');
+        box.style.display = 'block';
         renderModalLeaveStatus(calculateLeaveUsage(trip.start, trip.end));
 
         tripModal.classList.add('active');
@@ -905,9 +903,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const e = document.getElementById('endDate').value;
             const box = document.getElementById('leavePreview');
             if (s && e && new Date(s) <= new Date(e)) {
-                const used = calculateLeaveUsage(s, e);
                 box.style.display = 'block';
-                renderModalLeaveStatus(used);
+                renderModalLeaveStatus(calculateLeaveUsage(s, e));
             } else {
                 box.style.display = 'none';
                 renderModalLeaveStatus();
