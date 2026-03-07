@@ -999,6 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function drpOpen() {
         const popup = document.getElementById('drpPopup');
+        const trigger = document.getElementById('drpTrigger');
         if (!popup) return;
         const isOpen = popup.style.display !== 'none';
         popup.style.display = isOpen ? 'none' : 'block';
@@ -1006,6 +1007,26 @@ document.addEventListener('DOMContentLoaded', () => {
             drpMonth = drpStart ? new Date(drpStart) : new Date();
             drpMonth.setDate(1);
             drpRender();
+
+            // 위/아래 방향 자동 감지
+            requestAnimationFrame(() => {
+                const rect = trigger.getBoundingClientRect();
+                const popupH = popup.offsetHeight || 320;
+                const spaceBelow = window.innerHeight - rect.bottom;
+                const spaceAbove = rect.top;
+
+                if (spaceBelow < popupH && spaceAbove > spaceBelow) {
+                    // 공간 부족 → 위로 열기
+                    popup.style.bottom = `calc(100% + 0.4rem)`;
+                    popup.style.top = 'auto';
+                    popup.style.marginTop = '0';
+                } else {
+                    // 기본 → 아래로 열기
+                    popup.style.top = `calc(100% + 0.4rem)`;
+                    popup.style.bottom = 'auto';
+                    popup.style.marginTop = '0';
+                }
+            });
         }
     }
 
