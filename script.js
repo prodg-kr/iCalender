@@ -999,7 +999,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function drpOpen() {
         const popup = document.getElementById('drpPopup');
-        const trigger = document.getElementById('drpTrigger');
         if (!popup) return;
         const isOpen = popup.style.display !== 'none';
         popup.style.display = isOpen ? 'none' : 'block';
@@ -1007,26 +1006,6 @@ document.addEventListener('DOMContentLoaded', () => {
             drpMonth = drpStart ? new Date(drpStart) : new Date();
             drpMonth.setDate(1);
             drpRender();
-
-            // 위/아래 방향 자동 감지
-            requestAnimationFrame(() => {
-                const rect = trigger.getBoundingClientRect();
-                const popupH = popup.offsetHeight || 320;
-                const spaceBelow = window.innerHeight - rect.bottom;
-                const spaceAbove = rect.top;
-
-                if (spaceBelow < popupH && spaceAbove > spaceBelow) {
-                    // 공간 부족 → 위로 열기
-                    popup.style.bottom = `calc(100% + 0.4rem)`;
-                    popup.style.top = 'auto';
-                    popup.style.marginTop = '0';
-                } else {
-                    // 기본 → 아래로 열기
-                    popup.style.top = `calc(100% + 0.4rem)`;
-                    popup.style.bottom = 'auto';
-                    popup.style.marginTop = '0';
-                }
-            });
         }
     }
 
@@ -1047,7 +1026,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
         nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-        todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
+        todayBtn.addEventListener('click', () => {
+            currentDate = new Date();
+            // 어떤 탭에 있어도 캘린더로 전환 + 오늘 달로 이동
+            currentTab = 'calendar';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-tab="calendar"]').classList.add('active');
+            renderMainContent();
+        });
 
         // 모달 열기
         function openModal() {
@@ -1061,6 +1047,8 @@ document.addEventListener('DOMContentLoaded', () => {
             drpMonth = new Date(); drpMonth.setDate(1);
         }
         addTripBtn.addEventListener('click', openModal);
+        const sidebarAddTripBtn = document.getElementById('sidebarAddTripBtn');
+        if (sidebarAddTripBtn) sidebarAddTripBtn.addEventListener('click', openModal);
         closeModal.addEventListener('click', () => {
             editingIdx = -1;
             document.querySelector('#tripModal h2').textContent = '새 여행 계획 추가';
