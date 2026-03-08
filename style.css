@@ -571,6 +571,10 @@ body {
 
 .date-input {
     cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .date-inputs {
@@ -1208,6 +1212,10 @@ body {
 }
 
 .flight-input {
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
     padding: 0.6rem 0.8rem;
     border: 1px solid var(--border);
     border-radius: 0.5rem;
@@ -2850,4 +2858,5 @@ body {
 /* leavePreview 박스 (날짜 미선택 시 숨김) */
 .leave-preview-box {
     margin-top: 0.4rem;
+    display: none;
 }

@@ -182,8 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 상반기 2일, 하반기 2일 — 날짜 미정, 사용자가 직접 지정
     let trainingDays = JSON.parse(localStorage.getItem('ica_training') || JSON.stringify({
         h1: ['', ''],   // 상반기 2일
-        h2: ['', '']    // 하반기 2일
+        h2: ['', ''],    // 하반기 2일
+        public: ['', '', '', ''] // 공가 최대 4일분
     }));
+
+    // 기존 데이터 마이그레이션
+    if (!trainingDays.public) trainingDays.public = ['', '', '', ''];
 
     // ─── 근무시간 유틸 ────────────────────────────────────────────────────
     function getPrevWorkDay(dateStr) {
@@ -233,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getAllTrainingDates() {
-        return [...trainingDays.h1, ...trainingDays.h2].filter(d => d && d.length === 10);
+        return [...trainingDays.h1, ...trainingDays.h2, ...trainingDays.public].filter(d => d && d.length === 10);
     }
 
     function isTrainingDay(dateStr) {
@@ -338,9 +342,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const startDate = new Date(trip.start); startDate.setHours(0, 0, 0, 0);
             const diff = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
             const isPast = diff < 0;
-            const leaveUsed = calculateLeaveUsage(trip.start, trip.end);
+            const leaveUsed = trip.leaveUsed;
             const color = PALETTE[trip._idx % PALETTE.length];
             const dLabel = isPast ? '완료' : diff === 0 ? 'D-Day' : `D-${diff}`;
+            const publicBadge = trip.isPublic ? `<span style="display:inline-block; margin-left:8px; padding:2px 6px; background:#e2e8f0; color:#475569; font-size:0.75rem; border-radius:4px; font-weight:600;">기타(공가)</span>` : '';
 
             const item = document.createElement('div');
             item.className = `trip-panel-card ${isPast ? 'trip-past' : ''}`;
@@ -348,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.innerHTML = `
                 <div class="card-header">
                     <span class="trip-dday" style="background:${color}15; color:${color}">${dLabel}</span>
-                    <h3 class="trip-loc">${trip.location}</h3>
+                    <h3 class="trip-loc">${trip.location}${publicBadge}</h3>
                 </div>
                 <div class="card-body">
                     <div class="trip-date"><i class="far fa-calendar-check"></i> ${formatDateKR(trip.start)} ~ ${formatDateKR(trip.end)}</div>
@@ -443,6 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="td-half-label">하반기</span>
                             <span class="td-count ${td.h2.filter(d => d).length === 2 ? 'done' : 'pending'}">${td.h2.filter(d => d).length}/2일 ${td.h2.filter(d => d).length === 2 ? '✅' : '미정'}</span>
                         </div>
+                        <div class="td-half" style="margin-top:0.25rem;">
+                            <span class="td-half-label">공가(기타)</span>
+                            <span class="td-count pending" style="color:var(--text); font-weight:normal;">${td.public.filter(d => d).length}일 지정됨</span>
+                        </div>
                     </div>
                     ${allTd.length > 0 ? `<div class="td-dates">${allTd.map(d => `<span class="td-chip">${formatDateKR(d)}(${getDayName(d)})</span>`).join('')}</div>` : ''}
                     <button class="qbtn" onclick="showTrainingSection()">📅 날짜 설정하기</button>
@@ -470,34 +479,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- 사외교육 설정 섹션 (처음엔 숨김) -->
                 <div id="trainingSection" style="display:none; padding:1.25rem; border-top:1px solid var(--border); background:#fafafa;">
-                    <h4 style="margin-bottom:1rem; font-size:0.95rem;">📚 사외교육 날짜 지정</h4>
+                    <h4 style="margin-bottom:1rem; font-size:0.95rem;">📚 사외교육 및 공가 날짜 지정</h4>
                     <div class="training-form-grid">
                         <div class="td-form-group">
-                            <label>상반기 1일차</label>
+                            <label>교육 상반기 1일차</label>
                             <input type="date" class="flight-input" id="tdH1D1" value="${td.h1[0]}"
-                                min="2026-01-01" max="2026-06-30"
                                 onchange="updateTraining('h1',0,this.value)">
                         </div>
                         <div class="td-form-group">
-                            <label>상반기 2일차</label>
+                            <label>교육 상반기 2일차</label>
                             <input type="date" class="flight-input" id="tdH1D2" value="${td.h1[1]}"
-                                min="2026-01-01" max="2026-06-30"
                                 onchange="updateTraining('h1',1,this.value)">
                         </div>
                         <div class="td-form-group">
-                            <label>하반기 1일차</label>
+                            <label>교육 하반기 1일차</label>
                             <input type="date" class="flight-input" id="tdH2D1" value="${td.h2[0]}"
-                                min="2026-07-01" max="2026-12-31"
                                 onchange="updateTraining('h2',0,this.value)">
                         </div>
                         <div class="td-form-group">
-                            <label>하반기 2일차</label>
+                            <label>교육 하반기 2일차</label>
                             <input type="date" class="flight-input" id="tdH2D2" value="${td.h2[1]}"
-                                min="2026-07-01" max="2026-12-31"
                                 onchange="updateTraining('h2',1,this.value)">
                         </div>
+                        <div class="td-form-group"><label>공가(기타) 1</label>
+                        <input type="date" class="flight-input" value="${td.public[0]}" onchange="updateTraining('public',0,this.value)"></div>
+                        <div class="td-form-group"><label>공가(기타) 2</label>
+                        <input type="date" class="flight-input" value="${td.public[1]}" onchange="updateTraining('public',1,this.value)"></div>
+                        <div class="td-form-group"><label>공가(기타) 3</label>
+                        <input type="date" class="flight-input" value="${td.public[2]}" onchange="updateTraining('public',2,this.value)"></div>
+                        <div class="td-form-group"><label>공가(기타) 4</label>
+                        <input type="date" class="flight-input" value="${td.public[3]}" onchange="updateTraining('public',3,this.value)"></div>
                     </div>
-                    <p class="td-hint">💡 사외교육일은 연차 차감 없이 여행 기간에 포함할 수 있습니다. 날짜를 지정하면 캘린더에 표시됩니다.</p>
+                    <p class="td-hint">💡 사외교육 및 공가일은 연차 차감 없이 여행 기간에 포함할 수 있습니다. 날짜를 지정하면 캘린더에 표시됩니다.</p>
                 </div>
             </div>
         `;
@@ -506,23 +519,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function buildWelcomeMsg() {
-        const allTd = getAllTrainingDates();
-        const tdInfo = allTd.length > 0
-            ? `<br>📚 <strong>사외교육 지정일:</strong> ${allTd.map(d => formatDateKR(d) + '(' + getDayName(d) + ')').join(', ')}`
-            : `<br>📚 사외교육 날짜가 미지정 상태입니다. 왼쪽 <strong>[날짜 설정하기]</strong>에서 지정하면 캘린더에 반영됩니다.`;
+        const td = trainingDays;
+        const allEdu = [...td.h1, ...td.h2].filter(d => d && d.length === 10);
+        const allPub = [...td.public].filter(d => d && d.length === 10);
+
+        let infoStr = '';
+        if (allEdu.length > 0) infoStr += `<br>📚 <strong>사외교육 지정일:</strong> ${allEdu.map(d => formatDateKR(d) + '(' + getDayName(d) + ')').join(', ')}`;
+        if (allPub.length > 0) infoStr += `<br>🏢 <strong>공가 지정일:</strong> ${allPub.map(d => formatDateKR(d) + '(' + getDayName(d) + ')').join(', ')}`;
+        if (allEdu.length === 0 && allPub.length === 0) infoStr += `<br>📚 미지정 상태입니다. 왼쪽 <strong>[날짜 설정하기]</strong>에서 지정하면 캘린더에 반영됩니다.`;
+
         return `
             <div class="ai-msg ai">
                 <div class="msg-avatar">📚</div>
                 <div class="msg-bubble">
-                    <strong>사외교육 & 여행 팁 센터</strong>입니다 ✈️<br><br>
-                    <strong>📌 사외교육 안내</strong><br>
-                    • 상반기 2일 + 하반기 2일 = 총 4일<br>
-                    • 날짜 미정 → 왼쪽에서 직접 지정 가능<br>
-                    • 사외교육일은 <strong>연차 차감 없음</strong><br>
-                    • 황금연휴와 연계 시 여행 기간 연장에 활용 가능
-                    ${tdInfo}<br><br>
-                    왼쪽 버튼으로 <strong>항공권 절약 팁</strong>을 확인하거나,<br>
-                    <strong>[날짜 설정하기]</strong>로 사외교육 일정을 등록하세요!
+                    <strong>사외교육/공가 & 여행 팁 센터</strong>입니다 ✈️<br><br>
+                    <strong>📌 지정일 안내</strong><br>
+                    • 사외교육(연 4일) 및 공가는 <strong>연차 차감이 없습니다.</strong><br>
+                    • 날짜 미정 → 왼쪽 메뉴에서 직접 지정 가능<br>
+                    • 황금연휴와 연계 시 여행 기간 연장에 유용합니다!
+                    ${infoStr}<br><br>
+                    왼쪽 버튼으로 <strong>[날짜 설정하기]</strong>를 눌러 일정을 등록하세요!
                 </div>
             </div>`;
     }
@@ -557,10 +573,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tdHalves.length === 0) return;
         const td = trainingDays;
         tdHalves.forEach((el, i) => {
-            const h = i === 0 ? td.h1 : td.h2;
-            const cnt = h.filter(d => d).length;
-            el.querySelector('.td-count').textContent = `${cnt}/2일 ${cnt === 2 ? '✅' : '미정'}`;
-            el.querySelector('.td-count').className = `td-count ${cnt === 2 ? 'done' : 'pending'}`;
+            if (i === 0 || i === 1) {
+                const h = i === 0 ? td.h1 : td.h2;
+                const cnt = h.filter(d => d).length;
+                el.querySelector('.td-count').textContent = `${cnt}/2일 ${cnt === 2 ? '✅' : '미정'}`;
+                el.querySelector('.td-count').className = `td-count ${cnt === 2 ? 'done' : 'pending'}`;
+            } else {
+                const h = td.public;
+                const cnt = h.filter(d => d).length;
+                el.querySelector('.td-count').textContent = `${cnt}일 지정됨`;
+            }
         });
         const allTd = getAllTrainingDates();
         const tdDatesEl = document.querySelector('.td-dates');
@@ -862,10 +884,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTrainingSidebar() {
         const c = document.getElementById('trainingSidebarInfo'); if (!c) return;
-        const allTd = getAllTrainingDates();
         const td = trainingDays;
         const h1done = td.h1.filter(d => d).length;
         const h2done = td.h2.filter(d => d).length;
+        const pubdone = td.public.filter(d => d).length;
+
+        const allTd = [
+            ...td.h1.filter(d => d && d.length === 10).map(d => ({ date: d, type: '교육', icon: '📚' })),
+            ...td.h2.filter(d => d && d.length === 10).map(d => ({ date: d, type: '교육', icon: '📚' })),
+            ...td.public.filter(d => d && d.length === 10).map(d => ({ date: d, type: '공가', icon: '🏢' }))
+        ];
+
         c.innerHTML = `
             <div class="td-sidebar-row">
                 <span>상반기 교육</span>
@@ -875,7 +904,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>하반기 교육</span>
                 <span class="${h2done === 2 ? 'done' : 'pending'}">${h2done}/2일 ${h2done === 2 ? '✅' : '미정'}</span>
             </div>
-            ${allTd.length > 0 ? allTd.map(d => `<div class="td-chip-sm">📚 ${formatDateKR(d)}(${getDayName(d)})</div>`).join('') : '<div style="font-size:0.72rem;color:var(--text-muted)">날짜 미지정 — 팁 탭에서 설정</div>'}
+            <div class="td-sidebar-row" style="margin-top:0.25rem;">
+                <span>공가(기타)</span>
+                <span class="pending" style="color:var(--text); font-weight:normal;">${pubdone}일 지정됨</span>
+            </div>
+            ${allTd.length > 0 ? allTd.map(item => `<div class="td-chip-sm">${item.icon} ${formatDateKR(item.date)}(${getDayName(item.date)})</div>`).join('') : '<div style="font-size:0.72rem;color:var(--text-muted)">날짜 미지정 — 여행 팁 & 교육 탭에서 설정</div>'}
         `;
     }
 
@@ -1089,6 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const location = document.getElementById('tripLocation').value;
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
+
             if (!location || !start || !end) { alert('모든 정보를 입력해주세요!'); return; }
             if (new Date(start) > new Date(end)) { alert('시작일이 종료일보다 늦습니다.'); return; }
             const sy = new Date(start).getFullYear();

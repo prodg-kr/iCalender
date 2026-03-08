@@ -20,10 +20,12 @@
             <div class="brand"><i class="fas fa-plane-departure"></i><span>iCalender</span></div>
 
             <nav class="side-nav">
-                <button class="nav-btn active" data-tab="calendar"><i class="fas fa-calendar-alt"></i> 캘린더</button>
-                <button class="nav-btn" data-tab="trips"><i class="fas fa-list-ul"></i> 내 일정</button>
-                <button class="nav-btn" data-tab="golden"><i class="fas fa-star"></i> 황금연휴 추천</button>
-                <button class="nav-btn" data-tab="ai"><i class="fas fa-book-open"></i> 여행 팁 & 교육</button>
+                <button type="button" class="nav-btn active" data-tab="calendar"><i class="fas fa-calendar-alt"></i>
+                    캘린더</button>
+                <button type="button" class="nav-btn" data-tab="trips"><i class="fas fa-list-ul"></i> 내 일정</button>
+                <button type="button" class="nav-btn" data-tab="golden"><i class="fas fa-star"></i> 황금연휴 추천</button>
+                <button type="button" class="nav-btn" data-tab="ai"><i class="fas fa-book-open"></i> 여행 팁 &amp;
+                    교육</button>
             </nav>
 
             <div class="stats-card">
@@ -47,7 +49,7 @@
 
             <div class="footer-promo">
                 <p>떠날 준비 되셨나요?</p>
-                <button class="btn-primary" id="addTripBtn">새 여행 계획하기</button>
+                <button type="button" class="btn-primary" id="addTripBtn">새 여행 계획하기</button>
             </div>
         </aside>
 
@@ -56,9 +58,11 @@
                 <div class="header-left">
                     <h1 id="currentMonthYear">2026년 3월</h1>
                     <div class="navigation-controls">
-                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-                        <button id="todayBtn">오늘</button>
-                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        <button type="button" id="prevMonth" aria-label="이전 달"><i
+                                class="fas fa-chevron-left"></i></button>
+                        <button type="button" id="todayBtn">오늘</button>
+                        <button type="button" id="nextMonth" aria-label="다음 달"><i
+                                class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
                 <div class="header-right">
@@ -140,15 +144,15 @@
             <div class="form-group">
                 <label>도착일</label>
                 <input type="date" id="endDate" class="date-input">
-                <div id="leavePreview" class="leave-preview-box" style="display:none; margin-top:0.5rem;"></div>
+                <div id="leavePreview" class="leave-preview-box"></div>
             </div>
             <div class="modal-actions">
-                <button class="btn-secondary" id="closeModal">취소</button>
-                <button class="btn-primary" id="saveTrip">일정 추가하기</button>
+                <button type="button" class="btn-secondary" id="closeModal">취소</button>
+                <button type="button" class="btn-primary" id="saveTrip">일정 추가하기</button>
             </div>
         </div>
     </div>
-    <button id="mobileAddBtn" aria-label="새 여행 추가">＋</button>
+    <button type="button" id="mobileAddBtn" aria-label="새 여행 추가">＋</button>
     <script src="script.js"></script>
 </body>
 
