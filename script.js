@@ -828,7 +828,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const box = document.getElementById('leavePreview');
         box.style.display = 'block';
         renderModalLeaveStatus(calculateLeaveUsage(trip.start, trip.end));
-
         tripModal.classList.add('active');
     }
 
