@@ -15,6 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 지각: 귀국 당일 07:00 이전 도착 → 지각 출근 (월 8h 이내)
 
     const HOLIDAYS = {
+        // ─── 2024 (잔여) ───
+        '2024-01-01': '신정', '2024-02-09': '설날 연휴', '2024-02-10': '설날', '2024-02-11': '설날 연휴',
+        '2024-02-12': '대체공휴일', '2024-03-01': '삼일절', '2024-04-10': '제22대 국회의원선거',
+        '2024-05-01': '근로자의 날', '2024-05-05': '어린이날', '2024-05-06': '대체공휴일',
+        '2024-05-15': '부처님 오신 날', '2024-06-06': '현충일', '2024-08-15': '광복절',
+        '2024-09-14': '추석 연휴', '2024-09-15': '추석', '2024-09-16': '추석 연휴',
+        '2024-09-17': '추석', '2024-09-18': '추석 연휴', '2024-10-01': '국군의 날(임시)',
+        '2024-10-03': '개천절', '2024-10-09': '한글날', '2024-12-25': '성탄절',
+        // ─── 2025 ───
+        '2025-01-01': '신정', '2025-01-28': '설날 연휴', '2025-01-29': '설날', '2025-01-30': '설날 연휴',
+        '2025-03-01': '삼일절', '2025-03-03': '대체공휴일', '2025-05-01': '근로자의 날',
+        '2025-05-05': '어린이날/부처님 오신 날', '2025-05-06': '대체공휴일', '2025-06-06': '현충일',
+        '2025-08-15': '광복절', '2025-10-03': '개천절', '2025-10-05': '추석 연휴',
+        '2025-10-06': '추석', '2025-10-07': '추석 연휴', '2025-10-08': '대체공휴일',
+        '2025-10-09': '한글날', '2025-12-25': '성탄절',
         // ─── 2026 ───
         '2026-01-01': '신정', '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴',
         '2026-03-01': '삼일절', '2026-03-02': '대체공휴일(삼일절)', '2026-05-01': '근로자의 날',
@@ -72,7 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
         '2032-09-18': '추석 연휴', '2032-09-19': '추석', '2032-09-20': '추석 연휴',
         '2032-09-21': '대체공휴일(추석)', '2032-10-03': '개천절', '2032-10-04': '대체공휴일(개천절)',
         '2032-10-09': '한글날', '2032-10-11': '대체공휴일(한글날)',
-        '2032-12-25': '성탄절', '2032-12-27': '대체공휴일(성탄절)'
+        '2032-12-25': '성탄절', '2032-12-27': '대체공휴일(성탄절)',
+        // ─── 2033 (퇴임 전) ───
+        '2033-01-01': '신정', '2033-01-30': '설날 연휴', '2033-01-31': '설날', '2033-02-01': '설날 연휴',
+        '2033-02-02': '대체공휴일', '2033-03-01': '삼일절', '2033-05-01': '근로자의 날',
+        '2033-05-05': '어린이날', '2033-05-06': '부처님 오신 날', '2033-06-06': '현충일',
+        '2033-08-15': '광복절'
     };
 
     function getLeavePeriod(date) {
@@ -175,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentDate = new Date();
     let trips = JSON.parse(localStorage.getItem('ica_trips') || '[]');
+    let isPastTripsExpanded = false;
 
     let currentTab = 'calendar';
 
@@ -302,11 +323,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const tp = document.getElementById('tripsPanel');
         const gp = document.getElementById('goldenPanel');
         const ap = document.getElementById('aiPanel');
+        const sp = document.getElementById('settingsPanel');
 
         cw.style.display = currentTab === 'calendar' ? 'flex' : 'none';
         tp.style.display = currentTab === 'trips' ? 'block' : 'none';
         gp.style.display = currentTab === 'golden' ? 'block' : 'none';
         ap.style.display = currentTab === 'ai' ? 'flex' : 'none';
+        if (sp) sp.style.display = currentTab === 'settings' ? 'block' : 'none';
 
         if (currentTab === 'trips') renderTripsPanel();
         if (currentTab === 'golden') renderGoldenPanel();
@@ -970,29 +993,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function renderDDays() {
-        if (trips.length === 0) { dDayGrid.innerHTML = '<div class="d-day-item empty"><span>계획된 여행이 없습니다</span></div>'; return; }
+        if (trips.length === 0) {
+            dDayGrid.innerHTML = '<div class="d-day-item empty"><span>계획된 여행이 없습니다</span></div>';
+            return;
+        }
         dDayGrid.innerHTML = '';
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const PALETTE = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899'];
 
-        // 원본 index 유지하면서 정렬
         const indexed = trips.map((t, i) => ({ ...t, _idx: i }))
             .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+        const upcoming = [];
+        const past = [];
 
         indexed.forEach(trip => {
             const startDate = new Date(trip.start); startDate.setHours(0, 0, 0, 0);
             const diff = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-            const isPast = diff < 0;
-            const leaveUsed = calculateLeaveUsage(trip.start, trip.end);
+            if (diff < 0) past.push({ ...trip, diff });
+            else upcoming.push({ ...trip, diff });
+        });
+
+        const makeCard = (trip, isPast) => {
             const color = PALETTE[trip._idx % PALETTE.length];
-
             const item = document.createElement('div');
-            item.classList.add('sidebar-trip-card');
-            if (isPast) item.classList.add('trip-past');
+            item.className = `sidebar-trip-card ${isPast ? 'trip-past' : ''}`;
             item.style.borderLeftColor = color;
-
-            const dLabel = isPast ? '완료' : diff === 0 ? 'D-Day' : `D-${diff}`;
-
+            const dLabel = isPast ? '완료' : trip.diff === 0 ? 'D-Day' : `D-${trip.diff}`;
+            const leaveUsed = calculateLeaveUsage(trip.start, trip.end);
             item.innerHTML = `
                 <div class="card-info">
                     <span class="loc">${trip.location}</span>
@@ -1003,18 +1031,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>연차 ${leaveUsed}개</span>
                 </div>
                 <div class="card-actions">
-                    <button class="trip-edit-btn" data-idx="${trip._idx}">✏️ 수정</button>
-                    <button class="trip-del-btn"  data-idx="${trip._idx}">🗑️ 삭제</button>
+                    <button type="button" class="trip-edit-btn" data-idx="${trip._idx}">✏️ 수정</button>
+                    <button type="button" class="trip-del-btn"  data-idx="${trip._idx}">🗑️ 삭제</button>
                 </div>`;
-            dDayGrid.appendChild(item);
-        });
+            return item;
+        };
 
-        // 수정 버튼
+        // 다가올 일정
+        upcoming.forEach(t => dDayGrid.appendChild(makeCard(t, false)));
+
+        // 완료된 일정 (접기/펼치기)
+        if (past.length > 0) {
+            const toggle = document.createElement('div');
+            toggle.className = 'past-trips-toggle';
+            toggle.innerHTML = `<span>완료된 일정 (${past.length})</span> <i class="fas fa-chevron-${isPastTripsExpanded ? 'up' : 'down'}"></i>`;
+            toggle.onclick = () => {
+                isPastTripsExpanded = !isPastTripsExpanded;
+                renderDDays();
+            };
+            dDayGrid.appendChild(toggle);
+
+            const pastContainer = document.createElement('div');
+            pastContainer.className = `past-trips-container ${isPastTripsExpanded ? 'expanded' : ''}`;
+            past.forEach(t => pastContainer.appendChild(makeCard(t, true)));
+            dDayGrid.appendChild(pastContainer);
+        }
+
+        // 버튼 리스너
         dDayGrid.querySelectorAll('.trip-edit-btn').forEach(btn =>
-            btn.addEventListener('click', () => openEditModal(Number(btn.dataset.idx))));
-        // 삭제 버튼
+            btn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(Number(btn.dataset.idx)); }));
         dDayGrid.querySelectorAll('.trip-del-btn').forEach(btn =>
-            btn.addEventListener('click', () => deleteTrip(Number(btn.dataset.idx))));
+            btn.addEventListener('click', (e) => { e.stopPropagation(); deleteTrip(Number(btn.dataset.idx)); }));
     }
 
     // 편집 중인 trip index (-1 = 신규)
@@ -1102,6 +1149,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const mobileAddBtn = document.getElementById('mobileAddBtn');
         if (mobileAddBtn) mobileAddBtn.addEventListener('click', openModal);
+
+        // ─── 데이터 관리 (백업/복구) ───────────────────────────────────────────
+        const exportBtn = document.getElementById('exportBtn');
+        const importBtn = document.getElementById('importBtn');
+        const importFile = document.getElementById('importFile');
+
+        if (exportBtn) {
+            exportBtn.onclick = () => {
+                const data = {
+                    trips: JSON.parse(localStorage.getItem('ica_trips') || '[]'),
+                    training: JSON.parse(localStorage.getItem('ica_training') || '{}'),
+                    exportDate: new Date().toISOString(),
+                    version: "1.0"
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `iCalender_backup_${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+        }
+
+        if (importBtn) importBtn.onclick = () => importFile.click();
+
+        if (importFile) {
+            importFile.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                    try {
+                        const data = JSON.parse(re.target.result);
+                        if (!data.trips && !data.training) {
+                            throw new Error('Invalid format');
+                        }
+                        if (data.trips) localStorage.setItem('ica_trips', JSON.stringify(data.trips));
+                        if (data.training) localStorage.setItem('ica_training', JSON.stringify(data.training));
+                        alert('데이터 복구가 성공적으로 완료되었습니다. 앱을 다시 시작합니다.');
+                        location.reload();
+                    } catch (err) {
+                        alert('올바른 백업 파일(.json)이 아닙니다.');
+                        console.error(err);
+                    }
+                };
+                reader.readAsText(file);
+            };
+        }
 
         function updateLeavePreview() {
             const s = document.getElementById('startDate').value;
