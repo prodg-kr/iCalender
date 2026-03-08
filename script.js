@@ -75,76 +75,107 @@ document.addEventListener('DOMContentLoaded', () => {
         '2032-12-25': '성탄절', '2032-12-27': '대체공휴일(성탄절)'
     };
 
-    const GOLDEN_WINDOWS = [
-        {
-            // 9/24(목)~9/29(화): 쉬는날 목·금·토·월·화, 연차: 9/27(일) 1개
-            rank: 1, start: '2026-09-24', end: '2026-09-29', totalDays: 6, leaveDays: 1, efficiency: 6.0, extDays: 8,
-            badge: '🏆 최고효율', badgeClass: 'badge-gold', label: '추석 황금연휴',
-            desc: '추석 연휴(9/24~9/28) + 정기휴무(화). 연차 단 1개(9/27 일)로 6일!',
-            holidays: ['추석 연휴', '추석', '대체공휴일'],
-            tip: '9/23(수) 조퇴 → 오후 출발편 / 9/30(수) 지각 → 오전 귀국편 (최대 8일)'
-        },
-        {
-            // 5/22(금)~5/26(화): 쉬는날 금·일·월·화, 연차: 5/23(토) 1개
-            rank: 2, start: '2026-05-22', end: '2026-05-26', totalDays: 5, leaveDays: 1, efficiency: 5.0, extDays: 7,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '부처님 오신 날',
-            desc: '부처님오신날(5/24) + 대체공휴일(5/25) + 정기휴무(금·화). 연차 1개(5/23 토)로 5일!',
-            holidays: ['부처님 오신 날', '대체공휴일'],
-            tip: '5/21(목) 조퇴 → 오후 출발편 / 5/27(수) 지각 → 오전 귀국편 (최대 7일)'
-        },
-        {
-            // 6/2(화)~6/6(토): 쉬는날 화·수(선거)·금(현충일), 연차: 6/4(목) 1개
-            rank: 3, start: '2026-06-02', end: '2026-06-06', totalDays: 5, leaveDays: 1, efficiency: 5.0, extDays: 7,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '선거+현충일 연휴',
-            desc: '지방선거(6/3) + 현충일(6/6) + 정기휴무(화·금). 연차 1개(6/4 목)로 5일!',
-            holidays: ['지방선거', '현충일'],
-            tip: '6/1(월) 조퇴 → 오후 출발편 / 6/7(일) 지각 → 오전 귀국편 (최대 7일)'
-        },
-        {
-            // 8/14(금)~8/18(화): 쉬는날 금·토·월(대체)·화, 연차: 8/16(일) 1개
-            rank: 4, start: '2026-08-14', end: '2026-08-18', totalDays: 5, leaveDays: 1, efficiency: 5.0, extDays: 7,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '광복절 연휴',
-            desc: '광복절(8/15) + 대체공휴일(8/17) + 정기휴무(금·화). 연차 1개(8/16 일)로 5일!',
-            holidays: ['광복절', '대체공휴일'],
-            tip: '8/13(목) 조퇴 → 오후 출발편 / 8/19(수) 지각 → 오전 귀국편 (최대 7일)'
-        },
-        {
-            // 10/2(금)~10/6(화): 쉬는날 금·토·월(대체)·화, 연차: 10/4(일) 1개
-            rank: 5, start: '2026-10-02', end: '2026-10-06', totalDays: 5, leaveDays: 1, efficiency: 5.0, extDays: 7,
-            badge: '🥈 추천', badgeClass: 'badge-silver', label: '개천절 연휴',
-            desc: '개천절(10/3) + 대체공휴일(10/5) + 정기휴무(금·화). 연차 1개(10/4 일)로 5일!',
-            holidays: ['개천절', '대체공휴일'],
-            tip: '10/1(목) 조퇴 → 오후 출발편 / 10/7(수) 지각 → 오전 귀국편 (최대 7일)'
-        },
-        {
-            // 2/27(금)~3/3(화): 쉬는날 금·일(삼일절)·월(대체)·화, 연차: 2/28(토) 1개
-            rank: 6, start: '2026-02-27', end: '2026-03-03', totalDays: 5, leaveDays: 1, efficiency: 5.0, extDays: 7,
-            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '삼일절 연휴',
-            desc: '삼일절(3/1) + 대체공휴일(3/2) + 정기휴무(금·화). 연차 1개(2/28 토)로 5일!',
-            holidays: ['삼일절', '대체공휴일'],
-            tip: '2/26(목) 조퇴 → 오후 출발편 / 3/4(수) 지각 → 오전 귀국편 (최대 7일)'
-        },
-        {
-            // 2/16(월)~2/20(금): 쉬는날 월·화·수(설날연휴), 연차: 2/19(목) 1개
-            rank: 7, start: '2026-02-16', end: '2026-02-20', totalDays: 5, leaveDays: 1, efficiency: 5.0, extDays: 7,
-            badge: '🥉 양호', badgeClass: 'badge-bronze', label: '설날 연휴',
-            desc: '설날 연휴(2/16~2/18) + 정기휴무. 연차 1개(2/19 목)로 5일!',
-            holidays: ['설날 연휴', '설날'],
-            tip: '2/15(일) 조퇴 → 오후 출발편 / 2/21(토) 지각 → 오전 귀국편 (최대 7일)'
-        },
-        {
-            // 추석+개천절 연계: 9/24~10/6, 연차 4개(9/27일·9/30수·10/1목·10/4일)
-            rank: 8, start: '2026-09-24', end: '2026-10-06', totalDays: 13, leaveDays: 4, efficiency: 3.3, extDays: 15,
-            badge: '🌏 장기여행', badgeClass: 'badge-long', label: '추석+개천절 장기',
-            desc: '추석 연휴 + 개천절 대체공휴일 연계. 연차 4개로 13일 대여행!',
-            holidays: ['추석', '개천절', '대체공휴일'],
-            tip: '9/23(수) 조퇴 → 오후 출발편 / 10/7(수) 지각 → 오전 귀국편 (최대 15일)'
+    function getLeavePeriod(date) {
+        const y = date.getFullYear();
+        const isPastReset = date.getMonth() > 7 || (date.getMonth() === 7 && date.getDate() >= 25);
+        return isPastReset ? y : y - 1;
+    }
+
+    function getLeaveState(targetDate = currentDate) {
+        const pYear = getLeavePeriod(targetDate);
+        let total = 15;
+        if (pYear >= 2033) total = 0; // 정년퇴임
+        else if (pYear >= 2031) total = 18;
+        else if (pYear >= 2029) total = 17;
+        else if (pYear >= 2027) total = 16;
+
+        let used = 0;
+        trips.forEach(trip => {
+            if (getLeavePeriod(new Date(trip.start)) === pYear) {
+                used += calculateLeaveUsage(trip.start, trip.end);
+            }
+        });
+
+        return {
+            total, used,
+            remaining: pYear >= 2033 ? 0 : total - used,
+            resetDate: `${pYear}-08-25`,
+            isRetired: pYear >= 2033
+        };
+    }
+
+    function getGoldenWindows(year) {
+        const windows = [];
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, 11, 31);
+
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            for (let duration = 5; duration <= 15; duration++) {
+                const wEnd = new Date(d);
+                wEnd.setDate(d.getDate() + duration - 1);
+                if (wEnd.getFullYear() > year + 1) break;
+
+                let leaveDays = 0;
+                let t = new Date(d);
+                let holis = new Set();
+                while (t <= wEnd) {
+                    if (isWorkDay(t)) leaveDays++;
+                    else {
+                        const ds = formatDateLocal(t);
+                        if (HOLIDAYS[ds]) holis.add(HOLIDAYS[ds].replace(/ 연휴/, ''));
+                    }
+                    t.setDate(t.getDate() + 1);
+                }
+
+                if (leaveDays > 5) continue;
+                const efficiency = duration / (leaveDays || 1);
+
+                if ((duration >= 5 && leaveDays <= 1) || (duration >= 9 && leaveDays <= 3) || (duration >= 13 && leaveDays <= 4)) {
+                    let hName = holis.size > 0 ? Array.from(holis)[0] : '연휴가 포함된 일정';
+                    let label = hName + ' 추천 일정';
+                    if (duration >= 9) label = hName + ' 장기여행';
+
+                    let badge = '🥉 양호', badgeClass = 'badge-bronze';
+                    if (efficiency >= 5 || (duration >= 5 && leaveDays === 0)) { badge = '🏆 최고효율'; badgeClass = 'badge-gold'; }
+                    else if (efficiency >= 4) { badge = '🥈 추천'; badgeClass = 'badge-silver'; }
+                    else if (duration >= 10) { badge = '🌏 장기여행'; badgeClass = 'badge-long'; }
+
+                    const prevD = new Date(d); prevD.setDate(d.getDate() - 1);
+                    const nextD = new Date(wEnd); nextD.setDate(wEnd.getDate() + 1);
+
+                    const holiNames = Array.from(holis);
+                    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                    const sDay = dayNames[d.getDay()];
+                    const eDay = dayNames[wEnd.getDay()];
+                    const desc = leaveDays === 0
+                        ? `${holiNames.join(' + ')} + 정기휴무. 연차 0개로 ${duration}일!`
+                        : `${holiNames.join(' + ')} + 정기휴무. 연차 ${leaveDays}개로 ${duration}일!`;
+
+                    windows.push({
+                        start: formatDateLocal(d),
+                        end: formatDateLocal(wEnd),
+                        totalDays: duration, leaveDays, efficiency, extDays: duration + 2,
+                        badge, badgeClass, label, desc,
+                        holidays: holiNames,
+                        tip: `${prevD.getMonth() + 1}/${prevD.getDate()} 조퇴 → 오후 출발편 / ${nextD.getMonth() + 1}/${nextD.getDate()} 지각 → 오전 귀국편 (최대 ${duration + 2}일)`
+                    });
+                }
+            }
         }
-    ];
+
+        windows.sort((a, b) => b.efficiency - a.efficiency || a.leaveDays - b.leaveDays || b.totalDays - a.totalDays);
+        let filtered = [];
+        windows.forEach(w => {
+            const overlap = filtered.find(f => (f.start <= w.end && f.end >= w.start) && (f.totalDays >= w.totalDays || Math.abs(new Date(f.start) - new Date(w.start)) < 4 * 86400000));
+            if (!overlap) filtered.push(w);
+        });
+
+        return filtered.map((w, i) => { w.rank = i + 1; return w; });
+    }
 
     let currentDate = new Date();
     let trips = JSON.parse(localStorage.getItem('ica_trips') || '[]');
-    let leaveData = JSON.parse(localStorage.getItem('ica_leave') || JSON.stringify({ total: 15, remaining: 9, resetDate: '2026-08-25' }));
+
     let currentTab = 'calendar';
 
     // ─── 사외교육 데이터 ─────────────────────────────────────────────────
@@ -341,10 +372,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── 황금연휴 패널 ────────────────────────────────────────────────────
     function renderGoldenPanel() {
         const panel = document.getElementById('goldenPanel');
+        const year = currentDate.getFullYear();
+        const GOLDEN_WINDOWS = getGoldenWindows(year);
+        const leaveData = getLeaveState(currentDate);
         panel.innerHTML = `
             <div class="panel-header">
                 <h2>🗓️ 황금연휴 추천</h2>
-                <p class="panel-sub">2026년 잔여 연차 <strong>${leaveData.remaining}개</strong> 기준 · 화·금 정기휴무 + 공휴일 + <span class="highlight-text">조퇴/지각 전략</span> 최적화</p>
+                <p class="panel-sub">${year}년 잔여 연차 <strong>${leaveData.remaining}개</strong> 기준 · 화·금 정기휴무 + 공휴일 + <span class="highlight-text">조퇴/지각 전략</span> 최적화</p>
             </div>
             <div class="strategy-banner">
                 <div class="strategy-icon">⏰</div>
@@ -742,8 +776,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyGoldenWindowStyles() {
-        // rank8(장기여행)은 rank1+5 구간의 합산이므로 캘린더 중복 제외
-        const windows = GOLDEN_WINDOWS.filter(w => w.rank !== 8);
+        const year = currentDate.getFullYear();
+        const GOLDEN_WINDOWS = getGoldenWindows(year);
+        // exclude very long trips (> 10 days) to avoid messy calendar overlay
+        const windows = GOLDEN_WINDOWS.filter(w => w.totalDays < 10);
 
         // 날짜별로 rank 가장 낮은(=우선순위 높은) 윈도우 1개만 매핑 → 중복 방지
         const dateMap = {};
@@ -845,13 +881,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLeaveBalance() {
         const c = document.getElementById('leaveBalanceContainer'); if (!c) return;
-        c.innerHTML = `<div class="leave-card"><div class="leave-header"><span>잔여 연차</span><span class="count">${leaveData.remaining} / ${leaveData.total}</span></div><div class="progress-bar"><div class="progress" style="width:${(leaveData.remaining / leaveData.total) * 100}%"></div></div><p class="reset-info">갱신일: ${leaveData.resetDate}</p></div>`;
+        const leaveData = getLeaveState(currentDate);
+
+        if (leaveData.isRetired) {
+            c.innerHTML = `<div class="leave-card"><div class="leave-header"><span>잔여 연차</span><span class="count" style="color:#ef4444">정년퇴임 🎉</span></div><p class="reset-info">수고하셨습니다!</p></div>`;
+        } else {
+            c.innerHTML = `<div class="leave-card"><div class="leave-header"><span>잔여 연차</span><span class="count">${leaveData.remaining} / ${leaveData.total}</span></div><div class="progress-bar"><div class="progress ${leaveData.remaining <= 3 ? 'low' : ''}" style="width:${(leaveData.remaining / leaveData.total) * 100}%"></div></div><p class="reset-info">갱신일: ${leaveData.resetDate}</p></div>`;
+        }
 
         // 헤더 상단 뱃지 동기화
         const countEl = document.getElementById('headerLeaveCount');
         const arcEl = document.getElementById('headerLeaveArc');
-        if (countEl) countEl.textContent = `${leaveData.remaining} / ${leaveData.total}`;
-        if (arcEl) {
+        if (countEl) countEl.textContent = leaveData.isRetired ? '퇴임 🎉' : `${leaveData.remaining} / ${leaveData.total}`;
+        if (arcEl && !leaveData.isRetired) {
             const pct = leaveData.remaining / leaveData.total;
             const circ = 2 * Math.PI * 15; // r=15 → ≈94.25
             const dash = pct * circ;
@@ -861,14 +903,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // 뱃지 전체 low 클래스
         const badge = document.getElementById('headerLeaveBadge');
-        if (badge) {
+        if (badge && !leaveData.isRetired) {
             badge.classList.toggle('hlb-low', leaveData.remaining <= 3);
             badge.classList.toggle('hlb-empty', leaveData.remaining === 0);
+        } else if (badge) {
+            badge.classList.remove('hlb-low', 'hlb-empty');
         }
     }
 
     function renderGoldenMiniList() {
+        const leaveData = getLeaveState(currentDate);
         const container = document.getElementById('goldenMiniList'); if (!container) return;
+        if (leaveData.isRetired) {
+            container.innerHTML = '<div class="golden-mini-item" style="justify-content:center"><strong>퇴직 후 매일이 황금연휴입니다! ✨</strong></div>';
+            return;
+        }
+
+        const year = currentDate.getFullYear();
+        const GOLDEN_WINDOWS = getGoldenWindows(year);
         const top3 = GOLDEN_WINDOWS.filter(w => w.leaveDays <= leaveData.remaining).slice(0, 3);
         container.innerHTML = top3.map(w => `
             <div class="golden-mini-item" onclick="switchToGolden()">
@@ -950,13 +1002,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function deleteTrip(idx) {
-        const trip = trips[idx];
-        if (!trip) return;
-        if (!confirm(`"${trip.location}" 일정을 삭제할까요?`)) return;
-        leaveData.remaining += trip.leaveUsed;
+        if (!trips[idx]) return;
+        if (!confirm(`"${trips[idx].location}" 일정을 삭제할까요?`)) return;
         trips.splice(idx, 1);
         localStorage.setItem('ica_trips', JSON.stringify(trips));
-        localStorage.setItem('ica_leave', JSON.stringify(leaveData));
         renderAll();
     }
 
@@ -964,6 +1013,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderModalLeaveStatus(usedOverride = null) {
         const box = document.getElementById('modalLeaveStatus');
         if (!box) return;
+        const tripStartVal = document.getElementById('startDate').value;
+        const refDate = tripStartVal ? new Date(tripStartVal) : currentDate;
+        const leaveData = getLeaveState(refDate);
+        if (leaveData.isRetired) {
+            box.innerHTML = '<div class="mls-row"><span class="mls-label">정년퇴임 이후의 일정입니다</span></div>';
+            return;
+        }
         const pct = (leaveData.remaining / leaveData.total) * 100;
         const afterUsed = usedOverride !== null ? leaveData.remaining - usedOverride : null;
         const isShort = usedOverride !== null && afterUsed < 0;
@@ -989,9 +1045,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupEventListeners() {
-        prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
-        nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-        todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
+        prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderAll(); });
+        nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderAll(); });
+        todayBtn.addEventListener('click', () => { currentDate = new Date(); renderAll(); });
 
         function openModal() {
             editingIdx = -1;
@@ -1034,25 +1090,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             if (!location || !start || !end) { alert('모든 정보를 입력해주세요!'); return; }
+            if (new Date(start) > new Date(end)) { alert('시작일이 종료일보다 늦습니다.'); return; }
             const sy = new Date(start).getFullYear();
             if (sy > 2100 || sy < 1900) { alert('날짜가 올바르지 않습니다.'); return; }
             const leaveUsed = calculateLeaveUsage(start, end);
 
+            const st = new Date(start);
+            const ls = getLeaveState(st);
+
             if (editingIdx >= 0) {
                 const old = trips[editingIdx];
-                const availableLeave = leaveData.remaining + old.leaveUsed;
-                if (leaveUsed > availableLeave) { alert('연차가 부족합니다!'); return; }
-                leaveData.remaining = availableLeave - leaveUsed;
+                const isSamePeriod = getLeavePeriod(new Date(old.start)) === getLeavePeriod(st);
+                let available = ls.remaining;
+                if (isSamePeriod) available += old.leaveUsed;
+
+                if (!ls.isRetired && leaveUsed > available) { alert('해당 연도의 연차가 부족합니다!'); return; }
                 trips[editingIdx] = { location, start, end, leaveUsed };
                 editingIdx = -1;
             } else {
-                if (leaveUsed > leaveData.remaining) { alert('연차가 부족합니다!'); return; }
+                if (!ls.isRetired && leaveUsed > ls.remaining) { alert('해당 연도의 연차가 부족합니다!'); return; }
                 trips.push({ location, start, end, leaveUsed });
-                leaveData.remaining -= leaveUsed;
             }
 
             localStorage.setItem('ica_trips', JSON.stringify(trips));
-            localStorage.setItem('ica_leave', JSON.stringify(leaveData));
             tripModal.classList.remove('active');
             renderAll();
         });
