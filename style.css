@@ -1345,7 +1345,131 @@ body {
      768px  태블릿 이하
      480px  모바일
      360px  소형 모바일
-   ═══════════════════════════════════════════════════════════ */
+/* ── 내 일정 패널 (tripsPanel) ────────────────────────── */
+.mobile-trip-list {
+    margin-top: 1rem;
+}
+
+.trips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+.trip-panel-card {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--primary);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.trip-panel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.trip-panel-card.trip-past {
+    opacity: 0.7;
+    background: #f8fafc;
+}
+
+.trip-panel-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row-reverse;
+}
+
+.trip-dday {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.trip-loc {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.trip-panel-card .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.trip-date i, .trip-usage i {
+    width: 20px;
+    color: var(--primary);
+}
+
+.trip-panel-card .card-footer {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+}
+
+.panel-trip-edit-btn, .panel-trip-del-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.6rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--bg-main);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.panel-trip-edit-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.panel-trip-del-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #ef4444;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 1.5rem;
+    border: 2px dashed var(--border);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+    .trips-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .trip-panel-card {
+        padding: 1.25rem;
+    }
+}
 
 /* ── dvh 전환 (모바일 주소창 대응) ── */
 html { height: 100%; }

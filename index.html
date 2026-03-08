@@ -35,6 +35,7 @@
             </div>
             <nav class="side-nav">
                 <button class="nav-btn active" data-tab="calendar"><i class="fas fa-calendar-alt"></i> 캘린더</button>
+                <button class="nav-btn" data-tab="trips"><i class="fas fa-list-ul"></i> 내 일정</button>
                 <button class="nav-btn" data-tab="golden"><i class="fas fa-star"></i> 황금연휴 추천</button>
                 <!-- <button class="nav-btn" data-tab="flights"><i class="fas fa-plane"></i> 항공편 검색</button> -->
                 <button class="nav-btn" data-tab="ai"><i class="fas fa-book-open"></i> 여행 팁 & 교육</button>
@@ -69,9 +70,9 @@
                         </div>
                         <div class="hlb-ring" id="headerLeaveRing">
                             <svg viewBox="0 0 36 36">
-                                <circle class="hlb-ring-bg" cx="18" cy="18" r="15"/>
+                                <circle class="hlb-ring-bg" cx="18" cy="18" r="15" />
                                 <circle class="hlb-ring-fill" id="headerLeaveArc" cx="18" cy="18" r="15"
-                                    stroke-dasharray="0 94.25" stroke-dashoffset="23.56"/>
+                                    stroke-dasharray="0 94.25" stroke-dashoffset="23.56" />
                             </svg>
                         </div>
                     </div>
@@ -93,6 +94,15 @@
                     <span class="legend-item"><span class="legend-dot training-dot"></span> 사외교육</span>
                 </div>
                 <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+
+            <!-- My Trips Panel -->
+            <div id="tripsPanel" style="display:none;">
+                <div class="panel-header">
+                    <h2>📅 내 여행 일정</h2>
+                    <p class="panel-sub">저장된 여행 계획을 확인하고 수정하거나 삭제할 수 있습니다.</p>
+                </div>
+                <div id="mobileTripList" class="mobile-trip-list"></div>
             </div>
 
             <!-- Golden Holiday Panel -->

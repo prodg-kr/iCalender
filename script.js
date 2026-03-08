@@ -139,10 +139,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function init() {
-        renderCalendar();
-        renderSidebar();
+        renderAll();
         setupEventListeners();
         setupTabs();
+    }
+
+    function renderAll() {
+        renderCalendar();
+        renderSidebar();
+        renderMainContent();
     }
 
     function getAllTrainingDates() {
@@ -208,13 +213,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMainContent() {
         const cw = document.querySelector('.calendar-wrapper');
+        const tp = document.getElementById('tripsPanel');
         const gp = document.getElementById('goldenPanel');
         const ap = document.getElementById('aiPanel');
+
         cw.style.display = currentTab === 'calendar' ? 'flex' : 'none';
+        tp.style.display = currentTab === 'trips' ? 'block' : 'none';
         gp.style.display = currentTab === 'golden' ? 'block' : 'none';
         ap.style.display = currentTab === 'ai' ? 'flex' : 'none';
+
+        if (currentTab === 'trips') renderTripsPanel();
         if (currentTab === 'golden') renderGoldenPanel();
         if (currentTab === 'ai') renderAiPanel();
+    }
+
+    // ─── 내 일정 패널 ───────────────────────────────────────────────────
+    function renderTripsPanel() {
+        const container = document.getElementById('mobileTripList');
+        if (!container) return;
+
+        if (trips.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">✈️</div>
+                    <p>아직 계획된 여행이 없습니다.</p>
+                    <button class="btn-primary" onclick="document.getElementById('addTripBtn').click()" style="width: auto; margin-top: 1rem; background: var(--primary); color: white;">새 여행 계획하기</button>
+                </div>`;
+            return;
+        }
+
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const PALETTE = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899'];
+
+        // 원본 index 유지하면서 정렬
+        const indexed = trips.map((t, i) => ({ ...t, _idx: i }))
+            .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+        container.innerHTML = `<div class="trips-grid"></div>`;
+        const grid = container.querySelector('.trips-grid');
+
+        indexed.forEach(trip => {
+            const startDate = new Date(trip.start); startDate.setHours(0, 0, 0, 0);
+            const diff = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            const isPast = diff < 0;
+            const leaveUsed = calculateLeaveUsage(trip.start, trip.end);
+            const color = PALETTE[trip._idx % PALETTE.length];
+            const dLabel = isPast ? '완료' : diff === 0 ? 'D-Day' : `D-${diff}`;
+
+            const item = document.createElement('div');
+            item.className = `trip-panel-card ${isPast ? 'trip-past' : ''}`;
+            item.style.borderLeftColor = color;
+            item.innerHTML = `
+                <div class="card-header">
+                    <span class="trip-dday" style="background:${color}15; color:${color}">${dLabel}</span>
+                    <h3 class="trip-loc">${trip.location}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="trip-date"><i class="far fa-calendar-check"></i> ${formatDateKR(trip.start)} ~ ${formatDateKR(trip.end)}</div>
+                    <div class="trip-usage"><i class="fas fa-umbrella-beach"></i> 연차 ${leaveUsed}개 사용</div>
+                </div>
+                <div class="card-footer">
+                    <button class="panel-trip-edit-btn" data-idx="${trip._idx}"><i class="fas fa-edit"></i> 수정</button>
+                    <button class="panel-trip-del-btn" data-idx="${trip._idx}"><i class="fas fa-trash-alt"></i> 삭제</button>
+                </div>
+            `;
+            grid.appendChild(item);
+        });
+
+        // 이벤트 바인딩
+        grid.querySelectorAll('.panel-trip-edit-btn').forEach(btn =>
+            btn.addEventListener('click', () => openEditModal(Number(btn.dataset.idx))));
+        grid.querySelectorAll('.panel-trip-del-btn').forEach(btn =>
+            btn.addEventListener('click', () => deleteTrip(Number(btn.dataset.idx))));
     }
 
     // ─── 황금연휴 패널 ────────────────────────────────────────────────────
@@ -374,8 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showWelcome = function showWelcome() {
         const title = document.getElementById('aiPanelTitle');
-        const msgs  = document.getElementById('aiMessages');
-        const ts    = document.getElementById('trainingSection');
+        const msgs = document.getElementById('aiMessages');
+        const ts = document.getElementById('trainingSection');
         if (!title || !msgs || !ts) return; // aiPanel 미렌더 상태
         title.textContent = '💬 여행 팁 가이드';
         msgs.innerHTML = buildWelcomeMsg();
@@ -384,8 +454,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showTrainingSection = function () {
         const title = document.getElementById('aiPanelTitle');
-        const ts    = document.getElementById('trainingSection');
-        const msgs  = document.getElementById('aiMessages');
+        const ts = document.getElementById('trainingSection');
+        const msgs = document.getElementById('aiMessages');
         if (!title || !ts || !msgs) return;
         title.textContent = '📚 사외교육 날짜 설정';
         ts.style.display = 'block';
@@ -566,8 +636,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tip = TIPS[key];
         if (!tip) return;
         const title = document.getElementById('aiPanelTitle');
-        const ts    = document.getElementById('trainingSection');
-        const msgs  = document.getElementById('aiMessages');
+        const ts = document.getElementById('trainingSection');
+        const msgs = document.getElementById('aiMessages');
         if (!title || !ts || !msgs) return; // aiPanel 미렌더 상태
         title.textContent = tip.title;
         ts.style.display = 'none';
@@ -627,8 +697,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 날짜별로 rank 가장 낮은(=우선순위 높은) 윈도우 1개만 매핑 → 중복 방지
         const dateMap = {};
         windows.forEach(w => {
-            let cur = new Date(w.start); cur.setHours(0,0,0,0);
-            const endD = new Date(w.end); endD.setHours(0,0,0,0);
+            let cur = new Date(w.start); cur.setHours(0, 0, 0, 0);
+            const endD = new Date(w.end); endD.setHours(0, 0, 0, 0);
             while (cur <= endD) {
                 const ds = formatDateLocal(cur);
                 if (!dateMap[ds] || w.rank < dateMap[ds].rank) dateMap[ds] = w;
@@ -661,31 +731,31 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarGrid.querySelectorAll('.day-cell').forEach(c =>
             c.classList.remove('is-trip', 'trip-start', 'trip-end'));
 
-        const PALETTE = ['#4f46e5','#0ea5e9','#10b981','#f59e0b','#ec4899'];
+        const PALETTE = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899'];
 
         trips.forEach((trip, idx) => {
             const color = PALETTE[idx % PALETTE.length];
-            const start = new Date(trip.start); start.setHours(0,0,0,0);
-            const end   = new Date(trip.end);   end.setHours(0,0,0,0);
+            const start = new Date(trip.start); start.setHours(0, 0, 0, 0);
+            const end = new Date(trip.end); end.setHours(0, 0, 0, 0);
 
             calendarGrid.querySelectorAll('.day-cell').forEach(cell => {
                 const ds = cell.getAttribute('data-date');
-                const cd = new Date(ds); cd.setHours(0,0,0,0);
+                const cd = new Date(ds); cd.setHours(0, 0, 0, 0);
                 if (cd < start || cd > end) return;
 
                 const isStart = cd.getTime() === start.getTime();
-                const isEnd   = cd.getTime() === end.getTime();
+                const isEnd = cd.getTime() === end.getTime();
 
                 cell.classList.add('is-trip');
                 if (isStart) cell.classList.add('trip-start');
-                if (isEnd)   cell.classList.add('trip-end');
+                if (isEnd) cell.classList.add('trip-end');
 
                 // 셀 하단 컬러 바
                 const bar = document.createElement('div');
                 bar.className = 'trip-bar';
                 bar.style.background = color;
                 if (isStart) bar.style.borderRadius = '3px 0 0 3px';
-                if (isEnd)   bar.style.borderRadius = isStart ? '3px' : '0 3px 3px 0';
+                if (isEnd) bar.style.borderRadius = isStart ? '3px' : '0 3px 3px 0';
                 cell.appendChild(bar);
 
                 // 시작일에만 여행지 라벨
@@ -728,7 +798,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 헤더 상단 뱃지 동기화
         const countEl = document.getElementById('headerLeaveCount');
-        const arcEl   = document.getElementById('headerLeaveArc');
+        const arcEl = document.getElementById('headerLeaveArc');
         if (countEl) countEl.textContent = `${leaveData.remaining} / ${leaveData.total}`;
         if (arcEl) {
             const pct = leaveData.remaining / leaveData.total;
@@ -741,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 뱃지 전체 low 클래스
         const badge = document.getElementById('headerLeaveBadge');
         if (badge) {
-            badge.classList.toggle('hlb-low',  leaveData.remaining <= 3);
+            badge.classList.toggle('hlb-low', leaveData.remaining <= 3);
             badge.classList.toggle('hlb-empty', leaveData.remaining === 0);
         }
     }
@@ -767,15 +837,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (trips.length === 0) { dDayGrid.innerHTML = '<div class="d-day-item empty"><span>계획된 여행이 없습니다</span></div>'; return; }
         dDayGrid.innerHTML = '';
         const today = new Date(); today.setHours(0, 0, 0, 0);
-        const PALETTE = ['#4f46e5','#0ea5e9','#10b981','#f59e0b','#ec4899'];
+        const PALETTE = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899'];
 
         // 원본 index 유지하면서 정렬
         const indexed = trips.map((t, i) => ({ ...t, _idx: i }))
             .sort((a, b) => new Date(a.start) - new Date(b.start));
 
         indexed.forEach(trip => {
-            const startDate = new Date(trip.start); startDate.setHours(0,0,0,0);
-            const diff = Math.ceil((startDate.getTime() - today.getTime()) / (1000*60*60*24));
+            const startDate = new Date(trip.start); startDate.setHours(0, 0, 0, 0);
+            const diff = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
             const isPast = diff < 0;
             const leaveUsed = calculateLeaveUsage(trip.start, trip.end);
             const color = PALETTE[trip._idx % PALETTE.length];
@@ -836,7 +906,7 @@ document.addEventListener('DOMContentLoaded', () => {
         trips.splice(idx, 1);
         localStorage.setItem('ica_trips', JSON.stringify(trips));
         localStorage.setItem('ica_leave', JSON.stringify(leaveData));
-        renderCalendar(); renderSidebar();
+        renderAll();
     }
 
     // ─── 모달 연차 상태 렌더 ──────────────────────────────────────────────
@@ -845,7 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!box) return;
         const pct = (leaveData.remaining / leaveData.total) * 100;
         const afterUsed = usedOverride !== null ? leaveData.remaining - usedOverride : null;
-        const isShort   = usedOverride !== null && afterUsed < 0;
+        const isShort = usedOverride !== null && afterUsed < 0;
 
         box.innerHTML = `
             <div class="mls-row">
@@ -911,7 +981,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveTripBtn.addEventListener('click', () => {
             const location = document.getElementById('tripLocation').value;
             const start = document.getElementById('startDate').value;
-            const end   = document.getElementById('endDate').value;
+            const end = document.getElementById('endDate').value;
             if (!location || !start || !end) { alert('모든 정보를 입력해주세요!'); return; }
             const sy = new Date(start).getFullYear();
             if (sy > 2100 || sy < 1900) { alert('날짜가 올바르지 않습니다.'); return; }
@@ -933,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('ica_trips', JSON.stringify(trips));
             localStorage.setItem('ica_leave', JSON.stringify(leaveData));
             tripModal.classList.remove('active');
-            renderCalendar(); renderSidebar();
+            renderAll();
         });
     }
 
