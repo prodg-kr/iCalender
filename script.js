@@ -818,15 +818,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const trip = trips[idx];
         if (!trip) return;
         editingIdx = idx;
-
         document.querySelector('#tripModal h2').textContent = '여행 일정 수정';
         document.getElementById('saveTrip').textContent = '수정 완료';
         document.getElementById('tripLocation').value = trip.location;
         document.getElementById('startDate').value = trip.start;
         document.getElementById('endDate').value = trip.end;
-
-        const box = document.getElementById('leavePreview');
-        box.style.display = 'block';
+        document.getElementById('leavePreview').style.display = 'block';
         renderModalLeaveStatus(calculateLeaveUsage(trip.start, trip.end));
         tripModal.classList.add('active');
     }
@@ -869,12 +866,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>` : ''}
         `;
     }
+
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
         nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
         todayBtn.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
 
-        // 모달 열기
         function openModal() {
             editingIdx = -1;
             document.querySelector('#tripModal h2').textContent = '새 여행 계획 추가';
@@ -896,7 +893,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileAddBtn = document.getElementById('mobileAddBtn');
         if (mobileAddBtn) mobileAddBtn.addEventListener('click', openModal);
 
-        // 날짜 변경 시 실시간 연차 미리보기
         function updateLeavePreview() {
             const s = document.getElementById('startDate').value;
             const e = document.getElementById('endDate').value;
@@ -922,15 +918,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const leaveUsed = calculateLeaveUsage(start, end);
 
             if (editingIdx >= 0) {
-                // ── 수정 모드 ──
                 const old = trips[editingIdx];
-                const availableLeave = leaveData.remaining + old.leaveUsed; // 기존 연차 반환
+                const availableLeave = leaveData.remaining + old.leaveUsed;
                 if (leaveUsed > availableLeave) { alert('연차가 부족합니다!'); return; }
                 leaveData.remaining = availableLeave - leaveUsed;
                 trips[editingIdx] = { location, start, end, leaveUsed };
                 editingIdx = -1;
             } else {
-                // ── 신규 추가 ──
                 if (leaveUsed > leaveData.remaining) { alert('연차가 부족합니다!'); return; }
                 trips.push({ location, start, end, leaveUsed });
                 leaveData.remaining -= leaveUsed;
